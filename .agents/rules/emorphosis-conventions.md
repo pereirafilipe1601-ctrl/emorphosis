@@ -11,7 +11,10 @@ Estas regras aplicam-se a todos os agentes e desenvolvedores operando neste repo
    - Em `api/presence.php` e `assets/js/main.js`, nunca persista nem exponha IP em texto claro ou coordenadas GPS exatas; use apenas cidade/UF, célula quantizada de 6px dentro de `brazil_map_bounds.json` e hashes HMAC-SHA256.
 4. **Internacionalização (PT/EN)**:
    - Toda nova string visível na interface deve ter tradução `pt` e `en` em `assets/js/i18n.js` e atributo `data-i18n` (ou `data-i18n-placeholder`).
-5. **Segurança e Deploy**:
-   - Nunca leia/imprima senhas de `.env` ou `api/db.php` em logs ou respostas.
+5. **Memória Contínua da Equipe (`DEVLOG.md`)**:
+   - Antes de iniciar alterações em uma feature existente, consulte as entradas recentes do `DEVLOG.md` para entender decisões e contexto prévio.
+   - Ao concluir qualquer alteração relevante (feature, bugfix, mudança de arquitetura ou deploy), adicione uma entrada concisa no **topo** de `DEVLOG.md` com **Data, Responsável, O que mudou e Contexto/Porquê** (sem nunca expor senhas, tokens ou dados de `.env`).
+6. **Segurança e Deploy**:
+   - Nunca leia/imprima senhas de `.env`, `api/config.php` ou `api/db.php` em logs ou respostas.
    - Nunca rode `python scripts/deploy_ftp.py` sem solicitação explícita do usuário, pois envia diretamente para produção (`emorphosis.com.br`).
    - Ao criar qualquer novo arquivo de persistência runtime em `api/storage/`, adicione-o tanto em `EXCLUDE_NAMES` (`scripts/deploy_ftp.py`) quanto no `.gitignore`.

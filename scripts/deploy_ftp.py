@@ -23,6 +23,7 @@ EXCLUDE_NAMES = {
     ".agents",
     "GEMINI.md",
     "README.md",
+    "DEVLOG.md",
     "scripts",
     "database",
     "__pycache__",

@@ -48,7 +48,8 @@ emorphosis/
 ├── s0br3.html                    # S0BR3: manifesto e equipe
 ├── sair.html                     # Página oculta/easter-egg (noindex)
 ├── .htaccess                     # Rewrites Hostinger (HTTPS, URLs sem .html, Cache-Control)
-├── .env / .env.example           # Variáveis locais (FTP, MySQL, Anthropic)
+├── .env / .env.example           # Variáveis locais (FTP, MySQL, segredos PHP, Anthropic)
+├── DEVLOG.md                     # Diário cronológico de alterações e contexto (sem limite de 24 KB)
 ├── api/                          # Endpoints PHP (America/Sao_Paulo, JSON)
 │   ├── presence.php              # Radar anônimo + contador permanente de visitantes únicos
 │   ├── save_dream.php            # POST/GET de sonhos -> api/storage + espelho em /sonhos/
@@ -90,6 +91,8 @@ emorphosis/
 ├── sonhos/                       # Diretório público de sonhos (/sonhos/index.html)
 └── _conversa_emorphosis/         # Histórico e auditorias antigas (ignorado no Git e no FTP)
 ```
+
+> **Histórico & Contexto Contínuo**: o `GEMINI.md` tem limite rígido de 24.000 bytes no Antigravity e guarda a arquitetura atual; o registro cronológico de alterações de cada dev e o porquê das decisões ficam em [DEVLOG.md](./DEVLOG.md). Consulte-o antes de grandes mudanças e atualize-o ao concluir tarefas.
 
 ---
 
