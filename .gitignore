@@ -1,0 +1,52 @@
+# ==========================================================================
+# EMORPHOSIS — .gitignore
+# ==========================================================================
+
+# Credenciais, ambiente local e configs sensíveis
+.env
+.env.*
+!.env.example
+api/db.php
+api/config.php
+*.pem
+*.key
+
+# Dados runtime / usuários / caches gerados no servidor ou localmente
+api/storage/*.json
+api/storage/*.jsonl
+api/storage/*.txt
+api/storage/*.ics
+sonhos/respostas.json
+sonhos/respostas.txt
+database/proximos_drops_gerados.ics
+
+# Histórico local de conversa e scripts auxiliares de auditoria (contém transcrições)
+_conversa_emorphosis/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+
+# Node / PHP dependências (caso sejam adicionadas no futuro)
+node_modules/
+vendor/
+
+# Builds, caches, bancos locais e temporários
+*.sqlite
+*.sqlite3
+*.db
+*.log
+*.tmp
+*.bak
+.cache/
+
+# Sistema operacional e editores
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/

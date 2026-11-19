@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C4L3NDAR10 — emorphosis.com.br</title>
+  <link rel="icon" type="image/png" href="assets/img/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css?v=20261118g" />
+</head>
+<body>
+  <div class="bg-layer" aria-hidden="true">
+    <img src="assets/img/calendar-bg.png?v=20261109g" alt="" />
+  </div>
+
+  <!-- Cabeçalho Padrão Emorphosis -->
+  <header class="site-header">
+    <div class="lang-switch" aria-label="Idioma / Language">
+      <span role="button" tabindex="0" class="lang-btn active" data-lang-btn="pt">PT</span>
+      <span class="lang-sep">/</span>
+      <span role="button" tabindex="0" class="lang-btn" data-lang-btn="en">EN</span>
+    </div>
+
+    <div class="brand-wrap">
+      <a href="/?v=20261109e" class="brand-link" aria-label="EMORPHOSIS - Página Inicial">
+        <img src="assets/img/logo.png" alt="EMORPHOSIS" class="brand-logo" />
+      </a>
+      <div class="brand-divider" role="presentation"></div>
+    </div>
+
+    <nav class="site-nav" aria-label="Menu principal">
+      <ul class="nav-list">
+        <li><a href="/?v=20261109e" class="nav-link">H0M3</a></li>
+        <li><a href="m4rcas.html" class="nav-link">M4RCAS</a></li>
+        <li><a href="c4l3ndar10.html" class="nav-link active" aria-current="page">C4L3NDAR10</a></li>
+        <li><a href="s0br3.html" class="nav-link">S0BR3</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Conteúdo Principal: Calendário Oficial "Próximos drops" + Radar de Sugestão/Alertas -->
+  <main class="page-stage">
+    <div class="stage-content">
+      <section class="calendar-card" aria-label="Calendário de Próximos Drops">
+        <iframe
+          id="google-calendar-iframe"
+          class="calendar-iframe"
+          title="Próximos drops - Emorphosis"
+          src="https://calendar.google.com/calendar/embed?src=e279d9d10a587ca926785f28efb4fc3cda446fc8b7a4adecec5a111bf316dd01%40group.calendar.google.com&ctz=America%2FSao_Paulo"
+          style="border: 0"
+          width="800"
+          height="600"
+          frameborder="0"
+          scrolling="no"
+        ></iframe>
+
+        <!-- Agenda Sincronizada em Tempo Real (Google Calendar + Drops Sugeridos Automaticamente) -->
+        <div class="live-calendar-feed-wrap" id="live-calendar-feed-wrap">
+          <div class="quiz-results-header">
+            <h3 class="quiz-step-title">Drops Agendados no Calendário</h3>
+            <div style="display: inline-flex; align-items: center; gap: 8px;">
+              <span class="sub-selected-counter" id="live-calendar-count">Carregando...</span>
+              <button
+                type="button"
+                id="admin-calendar-btn"
+                class="admin-mode-toggle-btn"
+                title="Acesso Admin para gerenciar drops"
+                aria-label="Modo Administrador"
+              >🔒</button>
+            </div>
+          </div>
+          <div class="live-calendar-grid" id="live-calendar-grid"></div>
+        </div>
+      </section>
+
+      <section class="glass-box drops-radar-box" id="radar-drops">
+        <span class="section-kicker" data-i18n="cal.kicker">RADAR &amp; AUTOMAÇÃO DE LANÇAMENTOS</span>
+        <h2 class="section-heading" data-i18n="cal.form_title">Sugerir Drop ou Receber Avisos</h2>
+        <p class="section-sub" data-i18n="cal.form_sub">
+          Conhece um lançamento nacional que vai acontecer ou quer receber alertas dos próximos drops? Envie abaixo para adicionar automaticamente ao nosso calendário.
+        </p>
+
+        <form id="drops-radar-form" class="drops-form">
+          <input
+            type="email"
+            name="email"
+            required
+            placeholder="Seu e-mail"
+            data-i18n-placeholder="cal.email_ph"
+            class="radar-input"
+          />
+          <input
+            type="text"
+            name="marca"
+            required
+            list="calendar-brands-datalist"
+            placeholder="Nome da marca ou @instagram"
+            data-i18n-placeholder="cal.brand_ph"
+            class="radar-input"
+          />
+          <datalist id="calendar-brands-datalist"></datalist>
+          <input
+            type="date"
+            name="drop_date"
+            id="drop-date-input"
+            required
+            class="radar-input"
+            aria-label="Data do Drop"
+            title="Data do Drop"
+          />
+          <input
+            type="time"
+            name="drop_time"
+            id="drop-time-input"
+            value="19:00"
+            required
+            class="radar-input"
+            aria-label="Horário do Drop"
+            title="Horário do Drop (Horário de Brasília)"
+          />
+          <input
+            type="url"
+            name="link_post"
+            placeholder="Link do post / anúncio do drop (opcional)"
+            data-i18n-placeholder="cal.link_ph"
+            class="radar-input"
+          />
+          <button type="submit" class="btn-solid-green" data-i18n="cal.submit_btn">ADICIONAR DROP AO CALENDÁRIO</button>
+        </form>
+        <p id="drops-form-feedback" class="form-feedback" aria-live="polite"></p>
+      </section>
+    </div>
+  </main>
+
+  <script src="assets/js/i18n.js?v=20261118g"></script>
+  <script src="assets/js/main.js?v=20261118g"></script>
+  <script>
+    (function () {
+      fetch("api/cron_dispatch_drops.php?mode=ping").catch(() => {});
+
+      const dateInput = document.getElementById("drop-date-input");
+      if (dateInput && !dateInput.value) {
+        const now = new Date();
+        const yyyy = now.getFullYear();
+        const mm = String(now.getMonth() + 1).padStart(2, "0");
+        const dd = String(now.getDate()).padStart(2, "0");
+        dateInput.value = `${yyyy}-${mm}-${dd}`;
+      }
+
+      // Popula autocomplete das marcas do catálogo
+      fetch("assets/data/marcas.json")
+        .then((r) => (r.ok ? r.json() : []))
+        .then((list) => {
+          const dl = document.getElementById("calendar-brands-datalist");
+          if (!dl || !Array.isArray(list)) return;
+          dl.innerHTML = list
+            .map((b) => `<option value="${b.name}">@${b.handle}</option>`)
+            .join("");
+        })
+        .catch(() => {});
+
+      const ADMIN_STORAGE_KEY = "emorphosis_admin_token_v1";
+      const adminBtn = document.getElementById("admin-calendar-btn");
+
+      function getAdminToken() {
+        try {
+          return localStorage.getItem(ADMIN_STORAGE_KEY) || "";
+        } catch (_) {
+          return "";
+        }
+      }
+
+      function syncAdminButtonUI() {
+        if (!adminBtn) return;
+        const active = Boolean(getAdminToken());
+        adminBtn.classList.toggle("active", active);
+        adminBtn.textContent = active ? "🔓 ADMIN" : "🔒";
+        adminBtn.title = active
+          ? "Modo Admin ativo (clique para bloquear)"
+          : "Desbloquear exclusão rápida de drops (Admin)";
+      }
+
+      async function verifyAndSaveAdminToken(candidate) {
+        if (!candidate) return false;
+        try {
+          const res = await fetch("api/delete_calendar_drop.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "verify", admin_token: candidate.trim() })
+          });
+          const json = await res.json();
+          if (res.ok && json && json.ok && json.token_hash) {
+            localStorage.setItem(ADMIN_STORAGE_KEY, json.token_hash);
+            syncAdminButtonUI();
+            await loadLiveCalendarEvents();
+            return true;
+          }
+        } catch (_) {}
+        return false;
+      }
+
+      if (adminBtn) {
+        adminBtn.addEventListener("click", async () => {
+          if (getAdminToken()) {
+            if (confirm("Deseja desativar o Modo Admin neste navegador?")) {
+              localStorage.removeItem(ADMIN_STORAGE_KEY);
+              syncAdminButtonUI();
+              loadLiveCalendarEvents();
+            }
+            return;
+          }
+          const entered = prompt("Digite a chave de administrador para liberar o botão X de exclusão rápida:");
+          if (!entered) return;
+          const ok = await verifyAndSaveAdminToken(entered);
+          if (!ok) {
+            alert("Credencial inválida. Apenas administradores autorizados podem excluir drops.");
+          }
+        });
+      }
+
+      syncAdminButtonUI();
+
+      async function loadLiveCalendarEvents() {
+        const grid = document.getElementById("live-calendar-grid");
+        const countEl = document.getElementById("live-calendar-count");
+        if (!grid) return;
+
+        try {
+          const res = await fetch("api/get_calendar_drops.php?t=" + Date.now());
+          const json = await res.json();
+          if (!res.ok || !json.ok || !Array.isArray(json.events)) return;
+
+          const nowSec = Math.floor(Date.now() / 1000);
+          const futureEvents = json.events.filter((ev) => Number(ev.timestamp || 0) >= nowSec);
+
+          if (countEl) {
+            countEl.textContent = `${futureEvents.length} drop(s)`;
+          }
+
+          if (futureEvents.length === 0) {
+            grid.innerHTML = `<p style="grid-column: 1 / -1; opacity: 0.8; font-size: 13px; margin: 0;">Nenhum drop futuro agendado no momento. Use o formulário abaixo para adicionar um novo drop!</p>`;
+            return;
+          }
+
+          const isAdmin = Boolean(getAdminToken());
+
+          grid.innerHTML = futureEvents
+            .slice(0, 24)
+            .map((ev) => {
+              const badge = ev.source === "radar" ? "ADICIONADO PELO RADAR" : "AGENDA OFICIAL";
+              const linkBtn = ev.url
+                ? `<a href="${ev.url}" target="_blank" rel="noopener noreferrer" class="btn-solid-sm">VER DROP / INSTAGRAM ↗</a>`
+                : "";
+              const delBtn = isAdmin
+                ? `<button type="button" class="drop-admin-del-btn" data-del-uid="${(ev.uid || "").replace(/"/g, "&quot;")}" data-del-dedup="${(ev.dedup_key || "").replace(/"/g, "&quot;")}" data-del-title="${(ev.title || "").replace(/"/g, "&quot;")}" data-del-ts="${ev.timestamp || 0}" title="Excluir este drop (Admin)" aria-label="Excluir drop">✕</button>`
+                : "";
+              return `
+                <article class="live-drop-card">
+                  ${delBtn}
+                  <div class="live-drop-head">
+                    <img src="${ev.img || "assets/img/favicon.png"}" alt="${ev.marca}" width="44" height="44" loading="lazy" />
+                    <div style="${isAdmin ? "padding-right: 22px;" : ""}">
+                      <span class="collection-tag">${ev.date_br} · ${ev.time_br} · ${badge}</span>
+                      <h4>${ev.title}</h4>
+                    </div>
+                  </div>
+                  ${linkBtn ? `<div class="quiz-card-actions">${linkBtn}</div>` : ""}
+                </article>
+              `;
+            })
+            .join("");
+
+          if (isAdmin) {
+            grid.querySelectorAll(".drop-admin-del-btn").forEach((btn) => {
+              btn.addEventListener("click", async () => {
+                const uid = btn.getAttribute("data-del-uid") || "";
+                const dedupKey = btn.getAttribute("data-del-dedup") || "";
+                const title = btn.getAttribute("data-del-title") || "";
+                const ts = Number(btn.getAttribute("data-del-ts") || 0);
+                const card = btn.closest(".live-drop-card");
+                if (card) {
+                  card.style.opacity = "0.35";
+                  card.style.pointerEvents = "none";
+                }
+                try {
+                  const delRes = await fetch("api/delete_calendar_drop.php", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      admin_token: getAdminToken(),
+                      uid,
+                      dedup_key: dedupKey,
+                      title,
+                      timestamp: ts
+                    })
+                  });
+                  const delJson = await delRes.json();
+                  if (delRes.ok && delJson && delJson.ok) {
+                    if (card) card.remove();
+                    await loadLiveCalendarEvents();
+                  } else {
+                    if (card) {
+                      card.style.opacity = "1";
+                      card.style.pointerEvents = "auto";
+                    }
+                    alert(delJson.error || "Não foi possível excluir o drop.");
+                  }
+                } catch (_) {
+                  if (card) {
+                    card.style.opacity = "1";
+                    card.style.pointerEvents = "auto";
+                  }
+                }
+              });
+            });
+          }
+        } catch (_) {}
+      }
+
+      loadLiveCalendarEvents();
+
+      const form = document.getElementById("drops-radar-form");
+      const msg = document.getElementById("drops-form-feedback");
+      if (!form || !msg) return;
+
+      form.addEventListener("submit", async (ev) => {
+        ev.preventDefault();
+        const lang = window.EmorphosisI18n ? window.EmorphosisI18n.getLang() : "pt";
+        const data = Object.fromEntries(new FormData(form).entries());
+        msg.textContent = lang === "en" ? "Adding drop to calendar..." : "Adicionando drop automaticamente ao calendário...";
+        msg.className = "form-feedback";
+
+        try {
+          const res = await fetch("api/drops_submit.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+          });
+          const json = await res.json();
+          if (res.ok && json.ok) {
+            msg.textContent =
+              lang === "en"
+                ? "Drop automatically added to the Emorphosis Calendar & 1h Alert Radar!"
+                : "Drop adicionado automaticamente ao Calendário da Emorphosis e à fila de alertas de 1 hora!";
+            msg.className = "form-feedback ok";
+            form.reset();
+            if (dateInput) {
+              const now = new Date();
+              dateInput.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+            }
+            const timeInput = document.getElementById("drop-time-input");
+            if (timeInput) timeInput.value = "19:00";
+
+            await loadLiveCalendarEvents();
+            fetch("api/cron_dispatch_drops.php?mode=ping").catch(() => {});
+
+            if (json.gcal_synced) {
+              const iframe = document.getElementById("google-calendar-iframe");
+              if (iframe) {
+                const baseSrc = iframe.getAttribute("src").split("&refresh=")[0];
+                iframe.setAttribute("src", baseSrc + "&refresh=" + Date.now());
+              }
+            }
+          } else {
+            throw new Error(json.error || "Failed");
+          }
+        } catch (_) {
+          msg.textContent =
+            lang === "en"
+              ? "Could not submit right now. Please check the fields and try again."
+              : "Não foi possível enviar agora. Verifique os campos informados e tente novamente.";
+          msg.className = "form-feedback err";
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

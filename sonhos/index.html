@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>DIRETÓRIO DE SONHOS // emorphosis.com.br</title>
+  <link rel="icon" type="image/png" href="../assets/img/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --green: #39ff48;
+      --green-dim: rgba(57, 255, 72, 0.35);
+      --bg: #020603;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background:
+        url("../assets/img/state-window-bg.jpg?v=20261118e") center center / cover fixed no-repeat,
+        #000000;
+      color: #e6ffe8;
+      font-family: "Share Tech Mono", monospace;
+      min-height: 100vh;
+      padding: 28px 16px 60px;
+    }
+    .dir-shell {
+      max-width: 980px;
+      margin: 0 auto;
+      background: rgba(1, 8, 3, 0.94);
+      border: 2px solid var(--green);
+      border-radius: 8px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95), 0 0 28px rgba(57, 255, 72, 0.25);
+      overflow: hidden;
+    }
+    .dir-titlebar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      background: linear-gradient(90deg, #06250b 0%, #021004 100%);
+      border-bottom: 1.5px solid var(--green);
+      padding: 10px 16px;
+    }
+    .dir-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.06em;
+    }
+    .dir-badge {
+      background: var(--green);
+      color: #000000;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-weight: 700;
+    }
+    .dir-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .dir-btn {
+      appearance: none;
+      cursor: pointer;
+      text-decoration: none;
+      background: rgba(5, 28, 9, 0.9);
+      border: 1px solid var(--green);
+      color: var(--green);
+      font-family: "Share Tech Mono", monospace;
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 6px 11px;
+      border-radius: 4px;
+      transition: all 0.15s ease;
+    }
+    .dir-btn:hover {
+      background: var(--green);
+      color: #000000;
+      box-shadow: 0 0 12px rgba(57, 255, 72, 0.6);
+    }
+    .dir-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 14px 16px;
+      background: #020a03;
+      border-bottom: 1px solid var(--green-dim);
+    }
+    .dir-count {
+      font-family: "Chakra Petch", sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--green);
+      letter-spacing: 0.05em;
+    }
+    .dir-search {
+      flex: 1;
+      min-width: 220px;
+      max-width: 360px;
+      background: #000000;
+      border: 1px solid var(--green);
+      border-radius: 4px;
+      color: #ffffff;
+      font-family: "Share Tech Mono", monospace;
+      font-size: 12.5px;
+      padding: 6px 10px;
+      outline: none;
+    }
+    .dir-list {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .dream-row {
+      background: #000000;
+      border: 1px solid rgba(57, 255, 72, 0.42);
+      border-left: 3px solid var(--green);
+      border-radius: 5px;
+      padding: 11px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .dream-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 11px;
+      color: #88ff92;
+    }
+    .dream-loc {
+      background: rgba(25, 240, 40, 0.18);
+      border: 1px solid rgba(57, 255, 72, 0.55);
+      color: #ffffff;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-weight: 700;
+    }
+    .dream-text {
+      font-size: 14px;
+      color: #ffffff;
+      line-height: 1.45;
+      word-break: break-word;
+    }
+    .empty-msg {
+      text-align: center;
+      padding: 36px 16px;
+      color: #88ff92;
+      font-size: 13.5px;
+    }
+  </style>
+</head>
+<body>
+  <main class="dir-shell">
+    <header class="dir-titlebar">
+      <div class="dir-title">
+        <span class="dir-badge">&gt;_</span>
+        <span>C:\EMORPHOSIS\SONHOS\ — DIRETÓRIO DE RESPOSTAS DOS USUÁRIOS</span>
+      </div>
+      <div class="dir-actions">
+        <button type="button" class="dir-btn" id="btn-refresh">↻ ATUALIZAR</button>
+        <a href="../api/save_dream.php?format=txt" target="_blank" class="dir-btn">📄 ABRIR .TXT</a>
+        <a href="../api/save_dream.php?format=json" target="_blank" class="dir-btn">{ } ABRIR .JSON</a>
+        <a href="../" class="dir-btn">◂ VOLTAR AO SITE</a>
+      </div>
+    </header>
+
+    <div class="dir-toolbar">
+      <span class="dir-count" id="dreams-count">CARREGANDO REGISTROS...</span>
+      <input type="search" id="dreams-search" class="dir-search" placeholder="Filtrar por texto, data ou cidade..." autocomplete="off" />
+    </div>
+
+    <section class="dir-list" id="dreams-list" aria-live="polite"></section>
+  </main>
+
+  <script>
+    (function () {
+      let allDreams = [];
+      const listEl = document.getElementById("dreams-list");
+      const countEl = document.getElementById("dreams-count");
+      const searchEl = document.getElementById("dreams-search");
+      const refreshBtn = document.getElementById("btn-refresh");
+
+      function escapeHtml(str) {
+        return String(str || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function renderList() {
+        const q = (searchEl.value || "").trim().toLowerCase();
+        const filtered = allDreams.filter((item) => {
+          if (!q) return true;
+          return (
+            String(item.dream || "").toLowerCase().includes(q) ||
+            String(item.location || "").toLowerCase().includes(q) ||
+            String(item.date_br || "").toLowerCase().includes(q)
+          );
+        });
+
+        countEl.textContent = `${filtered.length} DE ${allDreams.length} SONHO(S) REGISTRADO(S)`;
+
+        if (!filtered.length) {
+          listEl.innerHTML = `<div class="empty-msg">&gt; Nenhuma resposta encontrada no diretório no momento.</div>`;
+          return;
+        }
+
+        listEl.innerHTML = filtered
+          .map((item, idx) => {
+            const num = String(allDreams.indexOf(item) + 1).padStart(3, "0");
+            return `
+              <article class="dream-row">
+                <div class="dream-meta">
+                  <span><strong>#${num}</strong> • ${escapeHtml(item.date_br || item.created_at || "")}</span>
+                  <span class="dream-loc">📍 ${escapeHtml(item.location || "Brasil")}</span>
+                </div>
+                <p class="dream-text">&gt; "${escapeHtml(item.dream)}"</p>
+              </article>
+            `;
+          })
+          .join("");
+      }
+
+      async function loadDreams() {
+        try {
+          const res = await fetch("../api/save_dream.php?t=" + Date.now());
+          const data = await res.json();
+          if (data && data.ok && Array.isArray(data.dreams)) {
+            allDreams = data.dreams;
+            renderList();
+          }
+        } catch (e) {
+          listEl.innerHTML = `<div class="empty-msg">&gt; Erro ao carregar o diretório de sonhos.</div>`;
+        }
+      }
+
+      if (searchEl) searchEl.addEventListener("input", renderList);
+      if (refreshBtn) refreshBtn.addEventListener("click", loadDreams);
+
+      loadDreams();
+    })();
+  </script>
+</body>
+</html>

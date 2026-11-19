@@ -1,0 +1,49 @@
+# ==========================================================================
+# Hostinger (.htaccess) — URLs limpas + Sem cache de HTML antigo
+# ==========================================================================
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|htm)$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+  </FilesMatch>
+  <FilesMatch "\.(png|jpg|jpeg|webp)$">
+    Header set Cache-Control "public, max-age=604800, no-transform"
+  </FilesMatch>
+</IfModule>
+
+RewriteEngine On
+
+# Forçar HTTPS na Hostinger
+RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP_HOST} !^(localhost|127\.0\.0\.1) [NC]
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Remover barra final em rotas que não são pastas reais (mantém caminhos relativos funcionando)
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.+)/$ /$1 [L,R=301]
+
+# Redirecionar /index.html para / e /pagina.html para URL limpa /pagina
+RewriteCond %{THE_REQUEST} \s/+index\.html[\s?] [NC]
+RewriteRule ^index\.html$ / [L,R=302,QSA]
+
+RewriteCond %{THE_REQUEST} \s/+([^/]+)\.html[\s?] [NC]
+RewriteRule ^ %1 [L,R=302,QSA]
+
+# Permitir acessar /m4rcas, /marca, /c4l3ndar10, /s0br3 sem extensão .html
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.html -f
+RewriteRule ^([^/]+)$ $1.html [L,QSA]
+
+DirectoryIndex index.html index.php
+
+# Bloquear acesso direto a arquivos de ambiente ou Git caso existam no servidor
+<FilesMatch "^\.(env|git)">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
