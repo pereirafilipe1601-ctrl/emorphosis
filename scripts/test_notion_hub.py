@@ -24,18 +24,22 @@ import notion_hub as nh  # noqa: E402
 
 
 class FakeNotionClient(nh.NotionClient):
-    """Cliente fake em memória para validar todas as chamadas de API sem rede."""
+    """Cliente fake stateful em memória para validar chamadas de API sem rede."""
 
     def __init__(self) -> None:
         super().__init__(token="ntn_test_token_only")
         self.calls: list[tuple[str, str, dict | None]] = []
         self.uploads: list[dict] = []
         self.fail_first_task_db = False
-        self.fail_column_list = False
+        self.fail_callout_icon = False
         self.children_by_parent: dict[str, list[dict]] = {}
         self.deleted_blocks: list[str] = []
         self.page_by_id: dict[str, dict] = {}
+        self.databases: dict[str, dict] = {}
+        self.views_by_id: dict[str, dict] = {}
+        self.views_by_db: dict[str, list[str]] = {}
         self.query_results_override: list[dict] | None = None
+        self.query_override_by_ds: dict[str, list[dict]] = {}
         self._page_counter = 0
 
     def request_json(self, method: str, path: str, payload: dict | None = None) -> dict:
@@ -52,6 +56,7 @@ class FakeNotionClient(nh.NotionClient):
                 "id": pid,
                 "url": f"https://www.notion.so/{pid.replace('-', '')}",
                 "cover": None,
+                "in_trash": False,
                 "properties": {
                     "Ideia": {"type": "title", "title": [{"plain_text": "Audio glitch no mapa"}]},
                     "Formatos": {"type": "multi_select", "multi_select": [{"name": "Áudio"}]},
@@ -74,7 +79,7 @@ class FakeNotionClient(nh.NotionClient):
             bid = path.split("/blocks/")[1].split("/children")[0]
             return {
                 "object": "list",
-                "results": self.children_by_parent.get(bid, []),
+                "results": list(self.children_by_parent.get(bid, [])),
                 "has_more": False,
                 "next_cursor": None,
             }
@@ -82,13 +87,58 @@ class FakeNotionClient(nh.NotionClient):
         if method == "DELETE" and path.startswith("/blocks/"):
             bid = path.split("/blocks/")[1]
             self.deleted_blocks.append(bid)
+            for parent_id, kids in list(self.children_by_parent.items()):
+                self.children_by_parent[parent_id] = [k for k in kids if k.get("id") != bid]
             return {"object": "block", "id": bid, "in_trash": True}
 
         if method == "PATCH" and path.startswith("/blocks/") and path.endswith("/children"):
-            if self.fail_column_list and payload:
-                if any(b.get("type") == "column_list" for b in payload.get("children", [])):
-                    raise nh.NotionAPIError(400, "validation_error", "column_list unsupported in test")
+            if self.fail_callout_icon and payload:
+                for blk in payload.get("children", []):
+                    if blk.get("type") == "callout":
+                        icon = (blk.get("callout") or {}).get("icon") or {}
+                        if icon.get("type") == "icon":
+                            raise nh.NotionAPIError(400, "validation_error", "native callout icon unsupported")
             return {"object": "list", "results": []}
+
+        if method == "GET" and path.startswith("/databases/"):
+            db_id = path.split("/databases/")[1]
+            if db_id in self.databases:
+                return self.databases[db_id]
+            return {"id": db_id, "parent": {"type": "page_id", "page_id": ""}, "is_inline": False, "data_sources": []}
+
+        if method == "PATCH" and path.startswith("/databases/"):
+            db_id = path.split("/databases/")[1]
+            db_obj = self.databases.setdefault(db_id, {"id": db_id, "parent": {}, "is_inline": True})
+            if payload:
+                if "parent" in payload:
+                    new_parent = payload["parent"].get("page_id")
+                    old_parent = (db_obj.get("parent") or {}).get("page_id")
+                    if old_parent and old_parent in self.children_by_parent:
+                        moved = [b for b in self.children_by_parent[old_parent] if b.get("id") == db_id]
+                        self.children_by_parent[old_parent] = [
+                            b for b in self.children_by_parent[old_parent] if b.get("id") != db_id
+                        ]
+                        if new_parent and moved:
+                            self.children_by_parent.setdefault(new_parent, []).extend(moved)
+                    elif new_parent:
+                        self.children_by_parent.setdefault(new_parent, []).append(
+                            {
+                                "id": db_id,
+                                "type": "child_database",
+                                "child_database": {"title": db_obj.get("title_text", "Database")},
+                            }
+                        )
+                    db_obj["parent"] = payload["parent"]
+                if "is_inline" in payload:
+                    db_obj["is_inline"] = payload["is_inline"]
+                if "title" in payload:
+                    title_txt = "".join((t.get("text") or {}).get("content", "") for t in payload["title"])
+                    db_obj["title_text"] = title_txt
+                    for kids in self.children_by_parent.values():
+                        for b in kids:
+                            if b.get("id") == db_id and b.get("type") == "child_database":
+                                b["child_database"]["title"] = title_txt
+            return db_obj
 
         if method == "POST" and path == "/databases":
             title_txt = "".join(t["text"]["content"] for t in (payload or {}).get("title", []))
@@ -96,14 +146,48 @@ class FakeNotionClient(nh.NotionClient):
                 if self.fail_first_task_db:
                     self.fail_first_task_db = False
                     raise nh.NotionAPIError(400, "validation_error", "status group unsupported on create")
-                return {
-                    "id": "11111111-1111-1111-1111-111111111111",
-                    "data_sources": [{"id": "22222222-2222-2222-2222-222222222222", "name": title_txt}],
-                }
-            return {
-                "id": "33333333-3333-3333-3333-333333333333",
-                "data_sources": [{"id": "44444444-4444-4444-4444-444444444444", "name": title_txt}],
+                db_id = "11111111-1111-1111-1111-111111111111"
+                ds_id = "22222222-2222-2222-2222-222222222222"
+            else:
+                db_id = "33333333-3333-3333-3333-333333333333"
+                ds_id = "44444444-4444-4444-4444-444444444444"
+            res = {
+                "id": db_id,
+                "parent": (payload or {}).get("parent", {}),
+                "is_inline": (payload or {}).get("is_inline", False),
+                "title_text": title_txt,
+                "data_sources": [{"id": ds_id, "name": title_txt}],
             }
+            self.databases[db_id] = res
+            parent_pid = ((payload or {}).get("parent") or {}).get("page_id")
+            if parent_pid:
+                self.children_by_parent.setdefault(parent_pid, []).append(
+                    {"id": db_id, "type": "child_database", "child_database": {"title": title_txt}}
+                )
+            return res
+
+        if method == "GET" and path.startswith("/views?"):
+            qs = path.split("?", 1)[1]
+            params = dict(part.split("=", 1) for part in qs.split("&") if "=" in part)
+            db_id = nh.urllib.parse.unquote(params.get("database_id", ""))
+            ids = self.views_by_db.get(db_id, [])
+            return {
+                "object": "list",
+                "results": [{"object": "view", "id": vid} for vid in ids],
+                "has_more": False,
+                "next_cursor": None,
+            }
+
+        if method == "GET" and path.startswith("/views/"):
+            vid = path.split("/views/")[1]
+            return self.views_by_id.get(vid, {"object": "view", "id": vid, "name": "Table"})
+
+        if method == "PATCH" and path.startswith("/views/"):
+            vid = path.split("/views/")[1]
+            view_obj = self.views_by_id.setdefault(vid, {"object": "view", "id": vid, "name": ""})
+            if payload and "name" in payload:
+                view_obj["name"] = payload["name"]
+            return view_obj
 
         if method == "GET" and path == "/data_sources/22222222-2222-2222-2222-222222222222":
             return {
@@ -133,9 +217,32 @@ class FakeNotionClient(nh.NotionClient):
         if method == "POST" and path == "/pages":
             self._page_counter += 1
             pid = f"aaaaaaaa-aaaa-aaaa-aaaa-{self._page_counter:012d}"
+            parent = (payload or {}).get("parent") or {}
+            if parent.get("type") == "page_id":
+                parent_id = parent["page_id"]
+                props = (payload or {}).get("properties") or {}
+                title_spans = ((props.get("title") or {}).get("title") or [])
+                title_txt = "".join((s.get("text") or {}).get("content", "") for s in title_spans) or "Page"
+                self.children_by_parent.setdefault(parent_id, []).append(
+                    {"id": pid, "type": "child_page", "child_page": {"title": title_txt}}
+                )
+                self.page_by_id[pid] = {
+                    "object": "page",
+                    "id": pid,
+                    "url": f"https://www.notion.so/{pid.replace('-', '')}",
+                    "in_trash": False,
+                    "properties": {"title": {"type": "title", "title": [{"plain_text": title_txt}]}},
+                }
             return {"id": pid, "url": f"https://www.notion.so/{pid.replace('-', '')}"}
 
         if method == "POST" and path.endswith("/query"):
+            ds_id = path.split("/data_sources/")[1].split("/query")[0]
+            if ds_id in self.query_override_by_ds:
+                return {
+                    "results": self.query_override_by_ds[ds_id],
+                    "has_more": False,
+                    "next_cursor": None,
+                }
             if self.query_results_override is not None:
                 return {
                     "results": self.query_results_override,
@@ -269,22 +376,46 @@ class NotionHubTests(unittest.TestCase):
                 ],
             )
 
-    def test_bootstrap_with_status_fallback_views_seed_and_env(self) -> None:
+    def test_bootstrap_creates_team_root_dev_subpage_clean_dbs_views_and_seed(self) -> None:
         client = FakeNotionClient()
         client.fail_first_task_db = True
+        root_id = "99999999-9999-9999-9999-999999999999"
+        client.page_by_id[root_id] = {
+            "object": "page",
+            "id": root_id,
+            "url": f"https://www.notion.so/{root_id.replace('-', '')}",
+            "properties": {"title": {"type": "title", "title": [{"plain_text": "Velho"}]}},
+        }
         with tempfile.TemporaryDirectory() as tmp:
             env_file = Path(tmp) / ".env"
             env_file.write_text("NOTION_API_KEY=ntn_fake\n", encoding="utf-8")
             ids = nh.cmd_bootstrap(
                 client=client,
-                page_id_raw="https://www.notion.so/EMORPHOSIS-HUB-99999999999999999999999999999999",
+                page_id_raw=f"https://www.notion.so/EMORPHOSIS-HUB-{root_id.replace('-', '')}",
                 seed=True,
                 save_env=True,
                 env_path=env_file,
             )
-            self.assertEqual(ids["NOTION_ROOT_PAGE_ID"], "99999999-9999-9999-9999-999999999999")
+            self.assertEqual(ids["NOTION_ROOT_PAGE_ID"], root_id)
+            dev_id = ids["NOTION_DEV_PAGE_ID"]
+            self.assertTrue(dev_id)
             self.assertEqual(ids["NOTION_TASKS_DS_ID"], "22222222-2222-2222-2222-222222222222")
             self.assertEqual(ids["NOTION_IDEAS_DS_ID"], "44444444-4444-4444-4444-444444444444")
+
+            # Raiz renomeada para EMORPHOSIS com capa e ícone oficiais
+            root_patch = [p for m, path, p in client.calls if m == "PATCH" and path == f"/pages/{root_id}"][-1]
+            self.assertEqual(root_patch["properties"]["title"]["title"][0]["text"]["content"], "EMORPHOSIS")
+            self.assertIn("cover", root_patch)
+            self.assertIn("icon", root_patch)
+
+            # Bancos criados dentro da subpágina Desenvolvimento como full-page (is_inline=False) e sem emojis
+            db_creates = [p for m, path, p in client.calls if m == "POST" and path == "/databases"]
+            self.assertTrue(all(p["parent"]["page_id"] == dev_id for p in db_creates))
+            self.assertTrue(all(p["is_inline"] is False for p in db_creates))
+
+            # Views sem emojis e sem parênteses
+            view_calls = [p for m, path, p in client.calls if m == "POST" and path == "/views"]
+            self.assertEqual([v["name"] for v in view_calls], ["Kanban", "Prioridades Ativas", "Concluídas", "Moodboard", "Inbox", "Pipeline"])
 
             # Verifica que back-relation foi renomeada para "Tarefas Geradas"
             patch_ideas = [
@@ -293,33 +424,21 @@ class NotionHubTests(unittest.TestCase):
             ]
             self.assertTrue(any(p and p.get("properties", {}).get("back_rel_id", {}).get("name") == "Tarefas Geradas" for p in patch_ideas))
 
-            # Verifica 6 views criadas (3 Tasks + 3 Ideas)
-            view_calls = [p for m, path, p in client.calls if m == "POST" and path == "/views"]
-            self.assertEqual(len(view_calls), 6)
-
-            # Verifica 1 ideia + 3 tarefas de seed criadas via data_source_id
-            page_calls = [p for m, path, p in client.calls if m == "POST" and path == "/pages"]
-            self.assertEqual(len(page_calls), 4)
-            self.assertTrue(all(p["parent"]["type"] == "data_source_id" for p in page_calls))
-
-            # Verifica capa, ícone da página raiz, ícones verdes dos bancos e capa Fit Lab
-            root_patches = [
+            # Seed: 1 ideia + 3 tarefas sem parênteses nos títulos
+            ds_pages = [
                 p for m, path, p in client.calls
-                if m == "PATCH" and path == "/pages/99999999-9999-9999-9999-999999999999"
+                if m == "POST" and path == "/pages" and p["parent"]["type"] == "data_source_id"
             ]
-            self.assertTrue(root_patches)
-            self.assertIn("cover", root_patches[-1])
-            self.assertIn("icon", root_patches[-1])
-            uploaded_names = [u["filename"] for u in client.uploads]
-            self.assertIn("notion-cover.png", uploaded_names)
-            self.assertIn("notion-icon.png", uploaded_names)
-            self.assertIn("aevus-jaqueta.png", uploaded_names)
-            db_patches = [
-                (path, p) for m, path, p in client.calls
-                if m == "PATCH" and path.startswith("/databases/")
+            self.assertEqual(len(ds_pages), 4)
+            task_titles = [
+                "".join(t["text"]["content"] for t in p["properties"]["Tarefa"]["title"])
+                for p in ds_pages
+                if "Tarefa" in p["properties"]
             ]
-            self.assertEqual(len(db_patches), 2)
-            self.assertTrue(all(p["icon"]["icon"]["color"] == "green" for _, p in db_patches))
+            self.assertTrue(all("(" not in t and ")" not in t for t in task_titles))
+
+            # .env contém NOTION_DEV_PAGE_ID
+            self.assertIn(f"NOTION_DEV_PAGE_ID={dev_id}", env_file.read_text(encoding="utf-8"))
 
     def test_create_idea_with_audio_image_and_link_sets_cover_and_blocks(self) -> None:
         client = FakeNotionClient()
@@ -378,7 +497,6 @@ class NotionHubTests(unittest.TestCase):
             self.assertIn("Integrar Notion Dev Hub", entry)
             final_text = devlog.read_text(encoding="utf-8")
             self.assertLess(final_text.index("Integrar Notion Dev Hub"), final_text.index("## [2026-11-18] — Antiga"))
-            # Confirma checkbox marcado como true no Notion
             patch_task = [
                 p for m, path, p in client.calls
                 if m == "PATCH" and path == "/pages/bbbbbbbb-bbbb-bbbb-bbbb-000000000001"
@@ -404,7 +522,6 @@ class NotionHubTests(unittest.TestCase):
                 if m == "PATCH" and path == "/pages/55555555-5555-5555-5555-555555555555"
             ][-1]
             assert patch_call is not None
-            # Preserva voz.ogg + adiciona capa.jpg e demo.mov
             names = [f["name"] for f in patch_call["properties"]["Anexos / Capa"]["files"]]
             self.assertEqual(names, ["voz.ogg", "capa.jpg", "demo.mov"])
             self.assertEqual(patch_call["cover"], {"type": "file_upload", "file_upload": {"id": "fu-1"}})
@@ -431,69 +548,95 @@ class NotionHubTests(unittest.TestCase):
             self.assertEqual(len(parsed), 1)
             self.assertEqual(parsed[0]["title"], "Integrar Notion Dev Hub")
 
-    def test_cmd_theme_restyles_root_page_idempotently_and_preserves_custom_blocks(self) -> None:
+    def test_cmd_theme_migrates_single_page_hub_to_multi_page_and_strips_ai_slop(self) -> None:
         client = FakeNotionClient()
         root_id = "8a89378c-be6b-83f3-bc24-81a553d09ed0"
         ideas_db_id = "33333333-3333-3333-3333-333333333333"
         tasks_db_id = "11111111-1111-1111-1111-111111111111"
+        ideas_ds_id = "44444444-4444-4444-4444-444444444444"
+        tasks_ds_id = "22222222-2222-2222-2222-222222222222"
         fitlab_id = "cccccccc-cccc-cccc-cccc-000000000001"
+        seed_t2 = "dddddddd-dddd-dddd-dddd-000000000002"
+        user_t = "dddddddd-dddd-dddd-dddd-000000000009"
 
+        client.page_by_id[root_id] = {
+            "object": "page",
+            "id": root_id,
+            "url": f"https://www.notion.so/{root_id.replace('-', '')}",
+            "properties": {"title": {"type": "title", "title": [{"plain_text": "EMORPHOSIS // DEV HUB"}]}},
+        }
+        client.databases = {
+            ideas_db_id: {
+                "id": ideas_db_id,
+                "parent": {"type": "page_id", "page_id": root_id},
+                "is_inline": True,
+                "title_text": "Idea & Media Vault",
+                "data_sources": [{"id": ideas_ds_id}],
+            },
+            tasks_db_id: {
+                "id": tasks_db_id,
+                "parent": {"type": "page_id", "page_id": root_id},
+                "is_inline": True,
+                "title_text": "Dev Task Tracker",
+                "data_sources": [{"id": tasks_ds_id}],
+            },
+        }
+        client.views_by_db = {
+            tasks_db_id: ["v-t1", "v-t2", "v-t3"],
+            ideas_db_id: ["v-i1", "v-i2", "v-i3"],
+        }
+        client.views_by_id = {
+            "v-t1": {"id": "v-t1", "name": "📋 Kanban (Status)"},
+            "v-t2": {"id": "v-t2", "name": "🔥 Prioridades Ativas"},
+            "v-t3": {"id": "v-t3", "name": "✅ Concluídas (DEVLOG)"},
+            "v-i1": {"id": "v-i1", "name": "🎨 Moodboard (Galeria)"},
+            "v-i2": {"id": "v-i2", "name": "📥 Inbox de Captura"},
+            "v-i3": {"id": "v-i3", "name": "🚀 Pipeline de Ideias"},
+        }
         client.children_by_parent = {
             root_id: [
-                {
-                    "id": "old-banner",
-                    "type": "callout",
-                    "callout": {"rich_text": [{"plain_text": "EMORPHOSIS // DEV HUB"}]},
-                },
+                {"id": "old-banner", "type": "callout", "callout": {"rich_text": [{"plain_text": "EMORPHOSIS // DEV HUB"}]}},
                 {"id": "old-cols", "type": "column_list", "has_children": True, "column_list": {}},
                 {"id": "old-div-top", "type": "divider", "divider": {}},
-                {
-                    "id": "old-h-ideas",
-                    "type": "heading_2",
-                    "heading_2": {"rich_text": [{"plain_text": "01 // IDEA & MEDIA VAULT"}]},
-                },
+                {"id": "old-h-ideas", "type": "heading_2", "heading_2": {"rich_text": [{"plain_text": "01 // IDEA & MEDIA VAULT"}]}},
                 {"id": ideas_db_id, "type": "child_database", "child_database": {"title": "Idea & Media Vault"}},
                 {"id": "old-div-mid", "type": "divider", "divider": {}},
-                {
-                    "id": "old-h-tasks",
-                    "type": "heading_2",
-                    "heading_2": {"rich_text": [{"plain_text": "02 // DEV TASK TRACKER"}]},
-                },
+                {"id": "old-h-tasks", "type": "heading_2", "heading_2": {"rich_text": [{"plain_text": "02 // DEV TASK TRACKER"}]}},
                 {"id": tasks_db_id, "type": "child_database", "child_database": {"title": "Dev Task Tracker"}},
                 {"id": "user-div", "type": "divider", "divider": {}},
-                {
-                    "id": "user-note",
-                    "type": "paragraph",
-                    "paragraph": {"rich_text": [{"plain_text": "Notas manuais da equipe"}]},
-                },
+                {"id": "user-note", "type": "paragraph", "paragraph": {"rich_text": [{"plain_text": "Notas manuais do time"}]}},
                 {"id": "old-div-foot", "type": "divider", "divider": {}},
-                {
-                    "id": "old-toggle",
-                    "type": "toggle",
-                    "toggle": {"rich_text": [{"plain_text": "03 // TERMINAL CHEATSHEET & VISUAL"}]},
-                },
+                {"id": "old-toggle", "type": "toggle", "toggle": {"rich_text": [{"plain_text": "03 // TERMINAL CHEATSHEET & VISUAL"}]}},
             ],
-            "old-cols": [
-                {"id": "col-1", "type": "column", "has_children": True, "column": {}},
-            ],
-            "col-1": [
+            "old-cols": [{"id": "col-1", "type": "column", "has_children": True, "column": {}}],
+            "col-1": [{"id": "col-1-callout", "type": "callout", "callout": {"rich_text": [{"plain_text": "00 // TERMINAL_NAV"}]}}],
+        }
+        client.query_override_by_ds = {
+            ideas_ds_id: [
                 {
-                    "id": "col-1-callout",
-                    "type": "callout",
-                    "callout": {"rich_text": [{"plain_text": "00 // TERMINAL_NAV"}]},
+                    "id": fitlab_id,
+                    "cover": None,
+                    "properties": {
+                        "Ideia": {"type": "title", "title": [{"plain_text": "Expandir biblioteca do Fit Lab"}]},
+                        "Anexos / Capa": {"type": "files", "files": []},
+                    },
                 }
             ],
-        }
-        client.query_results_override = [
-            {
-                "id": fitlab_id,
-                "cover": None,
-                "properties": {
-                    "Ideia": {"type": "title", "title": [{"plain_text": "Expandir biblioteca do Fit Lab"}]},
-                    "Anexos / Capa": {"type": "files", "files": []},
+            tasks_ds_id: [
+                {
+                    "id": seed_t2,
+                    "properties": {
+                        "Tarefa": {"type": "title", "title": [{"plain_text": "Expandir recortes PNG reais no Fit Lab (novas marcas)"}]},
+                    },
                 },
-            }
-        ]
+                {
+                    "id": user_t,
+                    "properties": {
+                        "Tarefa": {"type": "title", "title": [{"plain_text": "Nota customizada (NÃO MEXER)"}]},
+                    },
+                },
+            ],
+        }
         client.page_by_id[fitlab_id] = {
             "object": "page",
             "id": fitlab_id,
@@ -506,85 +649,124 @@ class NotionHubTests(unittest.TestCase):
             },
         }
 
-        env = {
-            "NOTION_ROOT_PAGE_ID": root_id,
-            "NOTION_IDEAS_DB_ID": ideas_db_id,
-            "NOTION_IDEAS_DS_ID": "44444444-4444-4444-4444-444444444444",
-            "NOTION_TASKS_DB_ID": tasks_db_id,
-            "NOTION_TASKS_DS_ID": "22222222-2222-2222-2222-222222222222",
-        }
-        nh.cmd_theme(client, env)
+        with tempfile.TemporaryDirectory() as tmp:
+            env_file = Path(tmp) / ".env"
+            env_file.write_text("NOTION_API_KEY=ntn_fake\n", encoding="utf-8")
+            env = {
+                "NOTION_ROOT_PAGE_ID": root_id,
+                "NOTION_IDEAS_DB_ID": ideas_db_id,
+                "NOTION_IDEAS_DS_ID": ideas_ds_id,
+                "NOTION_TASKS_DB_ID": tasks_db_id,
+                "NOTION_TASKS_DS_ID": tasks_ds_id,
+            }
+            nh.cmd_theme(client, env, save_env=True, env_path=env_file)
+            saved_env_text = env_file.read_text(encoding="utf-8")
 
-        # Chrome antigo removido, mas bancos e nota customizada (+ divider dela) preservados
+        # 1. Raiz renomeada para EMORPHOSIS e subpágina Desenvolvimento criada e gravada no .env
+        root_patch = [p for m, path, p in client.calls if m == "PATCH" and path == f"/pages/{root_id}"][-1]
+        self.assertEqual(root_patch["properties"]["title"]["title"][0]["text"]["content"], "EMORPHOSIS")
+        self.assertIn("cover", root_patch)
+        self.assertIn("icon", root_patch)
+        self.assertIn("NOTION_DEV_PAGE_ID=aaaaaaaa-aaaa-aaaa-aaaa-000000000001", saved_env_text)
+        dev_id = "aaaaaaaa-aaaa-aaaa-aaaa-000000000001"
+
+        # 2. Ambos os bancos movidos para Desenvolvimento com is_inline=False (subpáginas dedicadas!)
+        self.assertEqual(client.databases[tasks_db_id]["parent"], {"type": "page_id", "page_id": dev_id})
+        self.assertFalse(client.databases[tasks_db_id]["is_inline"])
+        self.assertEqual(client.databases[ideas_db_id]["parent"], {"type": "page_id", "page_id": dev_id})
+        self.assertFalse(client.databases[ideas_db_id]["is_inline"])
+
+        # 3. Todas as 6 views limpas sem emojis e sem parênteses
+        self.assertEqual(client.views_by_id["v-t1"]["name"], "Kanban")
+        self.assertEqual(client.views_by_id["v-t2"]["name"], "Prioridades Ativas")
+        self.assertEqual(client.views_by_id["v-t3"]["name"], "Concluídas")
+        self.assertEqual(client.views_by_id["v-i1"]["name"], "Moodboard")
+        self.assertEqual(client.views_by_id["v-i2"]["name"], "Inbox")
+        self.assertEqual(client.views_by_id["v-i3"]["name"], "Pipeline")
+
+        # 4. Chrome antigo removido na raiz, nota customizada e bancos intactos
         self.assertEqual(
             set(client.deleted_blocks),
             {"old-banner", "old-cols", "old-div-top", "old-h-ideas", "old-div-mid", "old-h-tasks", "old-div-foot", "old-toggle"},
         )
-        self.assertNotIn(ideas_db_id, client.deleted_blocks)
-        self.assertNotIn(tasks_db_id, client.deleted_blocks)
         self.assertNotIn("user-div", client.deleted_blocks)
         self.assertNotIn("user-note", client.deleted_blocks)
 
-        # Uploads e branding aplicados na página raiz e bancos
-        self.assertEqual([u["filename"] for u in client.uploads], ["notion-cover.png", "notion-icon.png", "aevus-jaqueta.png"])
-        root_patch = [p for m, path, p in client.calls if m == "PATCH" and path == f"/pages/{root_id}"][-1]
-        assert root_patch is not None
-        self.assertIn("cover", root_patch)
-        self.assertIn("icon", root_patch)
+        # 5. Layout limpo aplicado tanto na raiz quanto dentro de Desenvolvimento
+        root_appends = [p for m, path, p in client.calls if m == "PATCH" and path == f"/blocks/{root_id}/children"]
+        self.assertEqual(root_appends[0]["position"], {"type": "start"})
+        self.assertEqual(root_appends[1]["position"], {"type": "after_block", "after_block": {"id": dev_id}})
+
+        dev_appends = [p for m, path, p in client.calls if m == "PATCH" and path == f"/blocks/{dev_id}/children"]
+        self.assertEqual(dev_appends[0]["position"], {"type": "start"})
+        self.assertEqual(dev_appends[1]["position"], {"type": "after_block", "after_block": {"id": ideas_db_id}})
+
+        # 6. Apenas tarefa seed literal foi limpa; tarefa do usuário não foi tocada
+        seed_patch = [p for m, path, p in client.calls if m == "PATCH" and path == f"/pages/{seed_t2}"]
+        self.assertTrue(seed_patch)
+        self.assertEqual(seed_patch[-1]["properties"]["Tarefa"]["title"][0]["text"]["content"], "Expandir recortes PNG no Fit Lab para novas marcas")
+        self.assertFalse(any(path == f"/pages/{user_t}" for _, path, _ in client.calls))
+
+        # 7. Fit Lab recebeu aevus-jaqueta.png sem texto parentético
         fitlab_patch = [p for m, path, p in client.calls if m == "PATCH" and path == f"/pages/{fitlab_id}"][-1]
-        assert fitlab_patch is not None
         self.assertIn("cover", fitlab_patch)
 
-        # Posicionamento exato dos novos blocos HUD na página raiz
-        root_appends = [
-            p for m, path, p in client.calls
-            if m == "PATCH" and path == f"/blocks/{root_id}/children"
+        # 8. Idempotência: rodar theme uma segunda vez reutiliza Desenvolvimento (não cria página duplicada)
+        client.page_by_id[fitlab_id]["cover"] = {"type": "file", "file": {"url": "https://cdn.notion.so/aevus.png"}}
+        client.query_override_by_ds[ideas_ds_id][0]["cover"] = client.page_by_id[fitlab_id]["cover"]
+        client.query_override_by_ds[tasks_ds_id][0]["properties"]["Tarefa"]["title"] = [
+            {"plain_text": "Expandir recortes PNG no Fit Lab para novas marcas"}
         ]
-        self.assertEqual(len(root_appends), 3)
-        self.assertEqual(root_appends[0]["position"], {"type": "start"})
-        self.assertEqual([b["type"] for b in root_appends[0]["children"]], ["callout", "column_list", "divider", "heading_2"])
-        self.assertEqual(root_appends[1]["position"], {"type": "after_block", "after_block": {"id": ideas_db_id}})
-        self.assertEqual([b["type"] for b in root_appends[1]["children"]], ["divider", "heading_2"])
-        self.assertEqual(root_appends[2]["position"], {"type": "after_block", "after_block": {"id": tasks_db_id}})
-        self.assertEqual([b["type"] for b in root_appends[2]["children"]], ["divider", "toggle"])
+        dev_page_creates_before = len(
+            [p for m, path, p in client.calls if m == "POST" and path == "/pages" and (p or {}).get("parent", {}).get("type") == "page_id"]
+        )
+        env["NOTION_DEV_PAGE_ID"] = dev_id
+        nh.cmd_theme(client, env, save_env=False)
+        dev_page_creates_after = len(
+            [p for m, path, p in client.calls if m == "POST" and path == "/pages" and (p or {}).get("parent", {}).get("type") == "page_id"]
+        )
+        self.assertEqual(dev_page_creates_before, dev_page_creates_after)
+        self.assertNotIn("user-div", client.deleted_blocks)
+        self.assertNotIn("user-note", client.deleted_blocks)
 
-    def test_cmd_theme_fallback_without_columns_and_cli_skip_layout(self) -> None:
+    def test_cmd_theme_fallback_when_callout_icon_rejected_and_skip_layout(self) -> None:
         client = FakeNotionClient()
         root_id = "8a89378c-be6b-83f3-bc24-81a553d09ed0"
-        ideas_db_id = "33333333-3333-3333-3333-333333333333"
-        client.fail_column_list = True
+        dev_id = "aaaaaaaa-aaaa-aaaa-aaaa-000000000099"
+        client.fail_callout_icon = True
+        client.page_by_id[root_id] = {
+            "object": "page",
+            "id": root_id,
+            "in_trash": False,
+            "properties": {"title": {"type": "title", "title": [{"plain_text": "EMORPHOSIS"}]}},
+        }
+        client.page_by_id[dev_id] = {
+            "object": "page",
+            "id": dev_id,
+            "in_trash": False,
+            "properties": {"title": {"type": "title", "title": [{"plain_text": "Desenvolvimento"}]}},
+        }
         client.children_by_parent[root_id] = [
-            {"id": ideas_db_id, "type": "child_database", "child_database": {"title": "Idea & Media Vault"}}
+            {"id": dev_id, "type": "child_page", "child_page": {"title": "Desenvolvimento"}}
         ]
-        env = {"NOTION_ROOT_PAGE_ID": root_id, "NOTION_IDEAS_DB_ID": ideas_db_id}
+        env = {"NOTION_ROOT_PAGE_ID": root_id, "NOTION_DEV_PAGE_ID": dev_id}
 
         nh.cmd_theme(client, env)
-        root_appends = [
-            p for m, path, p in client.calls
-            if m == "PATCH" and path == f"/blocks/{root_id}/children"
-        ]
-        # Primeira tentativa com column_list falha, fallback envia 2 callouts empilhados
-        self.assertEqual([b["type"] for b in root_appends[1]["children"]], ["callout", "callout", "callout", "divider", "heading_2"])
+        root_appends = [p for m, path, p in client.calls if m == "PATCH" and path == f"/blocks/{root_id}/children"]
+        # Callout com icon nativo falha -> fallback envia paragraph limpo (sem emoji!)
+        self.assertEqual([b["type"] for b in root_appends[2]["children"]], ["divider", "heading_3", "paragraph"])
 
         # Testa --skip-layout via CLI main()
         client_skip = FakeNotionClient()
-        client_skip.children_by_parent[root_id] = [
-            {"id": ideas_db_id, "type": "child_database", "child_database": {"title": "Idea & Media Vault"}}
-        ]
-        skip_env = {
-            "NOTION_API_KEY": "ntn_fake",
-            "NOTION_ROOT_PAGE_ID": root_id,
-        }
+        client_skip.page_by_id[root_id] = client.page_by_id[root_id]
+        skip_env = {"NOTION_API_KEY": "ntn_fake", "NOTION_ROOT_PAGE_ID": root_id}
         with mock.patch.object(nh, "load_env", return_value=skip_env), mock.patch.object(
             nh, "NotionClient", return_value=client_skip
         ), mock.patch("sys.stdout", new_callable=nh.io.StringIO):
             rc = nh.main(["theme", "--skip-layout"])
             self.assertEqual(rc, 0)
         self.assertEqual(client_skip.deleted_blocks, [])
-        self.assertEqual(
-            [c for c in client_skip.calls if c[0] == "PATCH" and c[1] == f"/blocks/{root_id}/children"],
-            [],
-        )
+        self.assertEqual([c for c in client_skip.calls if c[0] == "PATCH" and "/blocks/" in c[1]], [])
         self.assertEqual([u["filename"] for u in client_skip.uploads], ["notion-cover.png", "notion-icon.png"])
 
     def test_enrich_fitlab_seed_cover_skips_when_already_populated(self) -> None:

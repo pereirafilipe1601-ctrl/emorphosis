@@ -1,58 +1,53 @@
-# EMORPHOSIS // DEV HUB — Guia de Configuração do Notion + Antigravity (Do Zero)
+# EMORPHOSIS — Guia de Configuração do Notion + Antigravity
 
-Este guia configura do zero o **EMORPHOSIS // DEV HUB** no Notion (controle de tarefas dos desenvolvedores + cofre multimídia de ideias com áudio, vídeo, fotos e links) integrado ao **Google Antigravity** em modo **híbrido**:
+Este guia configura do zero o workspace **EMORPHOSIS** no Notion (começando pela área de **Desenvolvimento**, com cofre multimídia e integração com o **Google Antigravity** em modo híbrido):
 
-1. **Notion MCP Oficial (`https://mcp.notion.com/mcp`)** — para conversar direto com o Notion em linguagem natural dentro do Antigravity (ler tarefas, registrar ideias, atualizar cards).
-2. **CLI Python do Repositório ([`scripts/notion_hub.py`](../scripts/notion_hub.py))** — para **criar automaticamente toda a estrutura com 1 comando (`bootstrap`)**, fazer **upload direto de áudios/vídeos pesados (até 5 GB no Notion Plus/Business)** via File Upload API e **sincronizar entregas concluídas com o [`DEVLOG.md`](../DEVLOG.md)**.
+1. **Notion MCP Oficial (`https://mcp.notion.com/mcp`)** — para ler e editar páginas/tarefas diretamente no chat do Antigravity.
+2. **CLI Python do Repositório ([`scripts/notion_hub.py`](../scripts/notion_hub.py))** — para provisionar a hierarquia completa com 1 comando (`bootstrap`), atualizar estrutura/identidade visual (`theme`), subir mídias pesadas até 5 GB e sincronizar entregas com o [`DEVLOG.md`](../DEVLOG.md).
 
 ---
 
 ## Parte 1 — Criar o Workspace e a Página Raiz no Notion (~3 min)
 
-1. Acesse [notion.so](https://www.notion.so) e crie/abra o workspace do projeto (ex: **EMORPHOSIS**).
-2. Em **Settings → Upgrade / Plan**, ative o plano **Plus** (ou Business) para liberar **uploads diretos de até 5 GB por arquivo** (vídeos, áudios longos, fotos em alta resolução) e **blocos ilimitados para múltiplos membros**.
-3. Convide o segundo desenvolvedor da equipe em **Settings → People → Add members** (com permissão *Full access*).
+1. Acesse [notion.so](https://www.notion.so) e crie/abra o workspace **EMORPHOSIS**.
+2. Em **Settings → Upgrade / Plan**, ative o plano **Plus** (ou Business) para liberar uploads diretos de até 5 GB por arquivo e blocos ilimitados.
+3. Convide os membros da equipe em **Settings → People → Add members**.
 4. Na barra lateral, crie uma página em branco na raiz do Teamspace com o título:
    ```text
-   EMORPHOSIS // DEV HUB
+   EMORPHOSIS
    ```
-   *(Opcional: adicione ícone ⚡ e capa escura/verde seguindo a identidade do site.)*
-5. **Copie o link dessa página** (botão **Share → Copy link** ou URL do navegador). Você vai usá-lo na Parte 3.
+5. **Copie o link dessa página** (**Share → Copy link**). Você vai usá-lo na Parte 3.
 
 ---
 
 ## Parte 2 — Criar a Internal Integration (Token da Notion API) (~2 min)
 
-1. Acesse o portal de integrações do Notion: [notion.so/profile/integrations](https://www.notion.so/profile/integrations).
+1. Acesse [notion.so/profile/integrations](https://www.notion.so/profile/integrations).
 2. Clique em **+ New integration**:
-   - **Name:** `Emorphosis Dev Hub Agent`
-   - **Associated workspace:** selecione o workspace **EMORPHOSIS**
+   - **Name:** `Emorphosis Agent` (ou `Emorphosis Dev Hub Agent`)
+   - **Associated workspace:** **EMORPHOSIS**
    - **Type:** `Internal`
-3. Na aba **Configuration**:
-   - Marque em **Capabilities**:
-     - ✅ Read content
-     - ✅ Update content
-     - ✅ Insert content
-     - ✅ Read comments / Insert comments *(opcional, útil para discussões)*
-   - Clique em **Save** e copie o **Internal Integration Secret** (`ntn_...`).
-4. **Passo obrigatório (que quase todo mundo esquece!):**
-   - Volte à página **`EMORPHOSIS // DEV HUB`** no Notion.
-   - Clique no menu **`•••`** (canto superior direito) → **Connections** → selecione **`Emorphosis Dev Hub Agent`** → **Confirm**.
-   *(Compartilhar a página raiz concede acesso automático a todos os bancos de dados que o script vai criar dentro dela.)*
+3. Em **Configuration → Capabilities**, marque:
+   - Read content
+   - Update content
+   - Insert content
+   - Read comments / Insert comments
+4. Clique em **Save** e copie o **Internal Integration Secret** (`ntn_...`).
+5. **Passo obrigatório:** volte à página **`EMORPHOSIS`** no Notion, clique em **`•••` → Connections** → selecione sua integração → **Confirm**.
 
 ---
 
 ## Parte 3 — Configurar `.env` e Provisionar Tudo com 1 Comando (~1 min)
 
-1. Se ainda não tiver o arquivo `.env` na raiz do repositório, copie o modelo:
+1. Se ainda não tiver `.env` na raiz do repositório, copie o modelo:
    ```bash
-   # Windows PowerShell
-   Copy-Item .env.example .env
+   # Windows PowerShell / cmd
+   copy .env.example .env
 
    # Linux / macOS
    cp .env.example .env
    ```
-2. Abra o `.env` local (nunca commitado no Git) e cole o token na seção 5:
+2. Abra o `.env` local e cole o token na seção 5:
    ```env
    NOTION_API_KEY=ntn_cole_seu_token_aqui
    ```
@@ -60,29 +55,27 @@ Este guia configura do zero o **EMORPHOSIS // DEV HUB** no Notion (controle de t
    ```bash
    python scripts/notion_hub.py doctor
    ```
-4. **Provisione toda a estrutura automaticamente** passando a URL da página `EMORPHOSIS // DEV HUB`:
+4. **Provisione toda a estrutura** passando a URL da página `EMORPHOSIS`:
    ```bash
    python scripts/notion_hub.py bootstrap --page-id "https://www.notion.so/SEU-LINK-AQUI"
    ```
 
-O que o comando `bootstrap` cria sozinho em ~10 segundos:
-- Identidade visual **Emorphosis**: capa oficial (`docs/notion_assets/notion-cover.png`), ícone Matrix neon (`docs/notion_assets/notion-icon.png`), banner HUD superior, cards de navegação (`00 // TERMINAL_NAV` & `ATALHOS_CLI`) e headings verdes.
-- Banco **`💡 Idea & Media Vault`** com propriedades (`Ideia`, `Status`, `Formatos`, `Pilar`, `Autor`, `Link Principal`, `Mídia / Drive`, `Anexos / Capa`, `Criado em`).
-- Banco **`📋 Dev Task Tracker`** com propriedades (`Tarefa`, `Status` [Backlog → A Fazer → Em Andamento → Em Revisão → Concluído], `Prioridade`, `Responsável`, `Área`, `Tipo`, `Prazo`, `Branch / PR`, `Registrado no DEVLOG`).
+O que o comando `bootstrap` cria automaticamente:
+- Página raiz **`EMORPHOSIS`** com capa (`docs/notion_assets/notion-cover.png`), ícone (`docs/notion_assets/notion-icon.png`) e links rápidos da plataforma (`H0M3`, `M4RCAS`, `C4L3NDAR10`, `S0BR3`, `SONHOS`, `GITHUB`).
+- Subpágina **`Desenvolvimento`** (primeira área ativa do time) contendo os dois bancos separados em páginas dedicadas (`is_inline: false`), sem nada empilhado inline:
+  - **`Dev Task Tracker`** — views **`Kanban`**, **`Prioridades Ativas`** e **`Concluídas`**.
+  - **`Idea & Media Vault`** — views **`Moodboard`**, **`Inbox`** e **`Pipeline`**.
 - **Relação bidirecional** automática: **`Ideia Origem` ⇄ `Tarefas Geradas`**.
-- **6 Views prontas**:
-  - No *Task Tracker*: `📋 Kanban (Status)`, `🔥 Prioridades Ativas`, `✅ Concluídas (DEVLOG)`.
-  - No *Idea Vault*: `🎨 Moodboard (Galeria com capa)`, `📥 Inbox de Captura`, `🚀 Pipeline de Ideias`.
-- **Backlog inicial** já populado com as 3 pendências reais do [`GEMINI.md`](../GEMINI.md) + 1 ideia vinculada ao Fit Lab (com preview `aevus-jaqueta.png`).
-- **Gravação automática** dos IDs (`NOTION_ROOT_PAGE_ID`, `NOTION_TASKS_DB_ID`, `NOTION_TASKS_DS_ID`, `NOTION_IDEAS_DB_ID`, `NOTION_IDEAS_DS_ID`) no seu `.env`.
+- Backlog inicial com pendências do [`GEMINI.md`](../GEMINI.md) e preview visual no Fit Lab (`aevus-jaqueta.png`).
+- Gravação automática dos IDs (`NOTION_ROOT_PAGE_ID`, `NOTION_DEV_PAGE_ID`, `NOTION_TASKS_DB_ID`, `NOTION_TASKS_DS_ID`, `NOTION_IDEAS_DB_ID`, `NOTION_IDEAS_DS_ID`) no `.env`.
 
-5. Para aplicar ou reaplicar **somente o visual Emorphosis** em um hub já existente (sem tocar nos bancos/cards):
+5. Para migrar ou reaplicar a estrutura multi-página, capa, ícones e views limpas em um workspace já criado (sem apagar dados):
    ```bash
    python scripts/notion_hub.py theme
    ```
-   *(No Notion, ative o **Dark Mode** com `Ctrl + Shift + L` / `Cmd + Shift + L` e ligue **`••• → Full width`** para completar a paleta `#020502` + `#19f028`.)*
+   *(No Notion, ative o **Dark Mode** com `Ctrl + Shift + L` / `Cmd + Shift + L` e ligue **`••• → Full width`**.)*
 
-6. Rode o diagnóstico novamente para confirmar tudo verde:
+6. Rode o diagnóstico novamente:
    ```bash
    python scripts/notion_hub.py doctor
    ```
@@ -91,12 +84,8 @@ O que o comando `bootstrap` cria sozinho em ~10 segundos:
 
 ## Parte 4 — Conectar o Notion MCP Oficial no Google Antigravity (~2 min)
 
-Para que o Antigravity leia e escreva no seu Notion **direto no chat (sem rodar CLI manualmente para consultas/anotações rápidas)**:
-
-### Via interface do Antigravity
-1. No menu lateral do Antigravity, abra **Customizations → MCP Servers** (ou no painel do agente: `•••` → **MCP Servers → Manage MCP Servers → View raw config**).
-2. Se o **Notion** aparecer na loja nativa (*MCP Store*), clique em **Install / Connect** e autorize via OAuth no navegador.
-3. Caso adicione manualmente no `mcp_config.json`, use exatamente a chave **`serverUrl`** (padrão do Antigravity para Streamable HTTP):
+1. No Antigravity, abra **Customizations → MCP Servers** (ou `•••` → **MCP Servers → Manage MCP Servers → View raw config**).
+2. Instale o **Notion** pela loja nativa ou adicione em `mcp_config.json`:
    ```json
    {
      "mcpServers": {
@@ -106,19 +95,14 @@ Para que o Antigravity leia e escreva no seu Notion **direto no chat (sem rodar 
      }
    }
    ```
-4. Salve, clique em **Refresh** na lista de MCP Servers e complete o login OAuth do Notion no navegador escolhendo a página **`EMORPHOSIS // DEV HUB`** (ou o workspace inteiro).
-
-> **Dica de uso em conversas remotas vs. locais:**
-> - **Conversa no app/IDE local:** funciona tanto o **Notion MCP** quanto o CLI `scripts/notion_hub.py` (incluindo upload de arquivos locais pesados!).
-> - **Conversa remota na nuvem:** o **Notion MCP** conectado na sua conta/projeto funciona direto; se quiser rodar o CLI na VM remota, adicione `api.notion.com` nos domínios permitidos (`allowed_hosts`) ou rode o CLI no terminal local.
+3. Salve, clique em **Refresh** e conclua o login OAuth no navegador autorizando a página **`EMORPHOSIS`** (ou o workspace inteiro).
 
 ---
 
 ## Parte 5 — Onboarding do 2º Desenvolvedor
 
-Como os IDs do Notion e o token ficam no `.env` (ignorado no Git por segurança):
-1. O segundo dev puxa o repositório (`git pull`) — ele já recebe `scripts/notion_hub.py`, esta documentação e a skill `.agents/skills/emorphosis-notion-hub/`.
-2. Compartilhe com ele (por canal privado, nunca no Git) o bloco `# --- 5. Notion Dev Hub ---` do `.env` já preenchido pelo `bootstrap`.
+1. O colega puxa o repositório (`git pull`).
+2. Compartilhe por canal privado o bloco `# --- 5. Notion Hub ---` do `.env` preenchido.
 3. Ele também conecta o **Notion MCP** no Antigravity dele com a própria conta Notion.
 
 ---

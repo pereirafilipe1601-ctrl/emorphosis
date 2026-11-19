@@ -7,6 +7,25 @@ Mantido separado do [GEMINI.md](./GEMINI.md) para respeitar o limite de `24.000`
 
 ---
 
+## [2026-11-19] — Reestruturação Multi-Página do Notion (`EMORPHOSIS` -> `Desenvolvimento`) & Remoção de AI Slop
+**Responsável:** Filipe (+ Antigravity)
+**Arquivos principais:** `docs/notion_assets/notion-cover.png`, `scripts/notion_hub.py`, `scripts/test_notion_hub.py`, `.env.example`, `docs/NOTION_HUB_SETUP.md`, `.agents/skills/emorphosis-notion-hub/SKILL.md`
+
+### O que mudou
+- Reestruturado o Notion de página única para **hub multi-página de todo o time Emorphosis** (construindo por enquanto a área de **Desenvolvimento**):
+  - **Raiz (`EMORPHOSIS`)**: portal enxuto com links da plataforma (`H0M3`, `M4RCAS`, `C4L3NDAR10`, `S0BR3`, `SONHOS`, `GITHUB`) e subpágina `Desenvolvimento` (`NOTION_DEV_PAGE_ID`).
+  - **Subpágina `Desenvolvimento`**: moveu `Dev Task Tracker` e `Idea & Media Vault` para páginas dedicadas e independentes (`is_inline: false`), com ícones nativos verdes da Notion API e capa oficial, eliminando o empilhamento inline.
+- Removido todo **AI slop** da interface gerada, da capa e dos seeds:
+  - Removido `DEV HUB //` da capa `docs/notion_assets/notion-cover.png` mantendo `EMR PHS` + `EMERGENT METAMORPHOSIS`.
+  - Removidos todos os emojis, blocos redundantes (`TERMINAL_NAV`, `ATALHOS_CLI`, `TERMINAL CHEATSHEET`), textos entre parênteses e explicações após travessão em cabeçalhos, views (`Kanban`, `Prioridades Ativas`, `Concluídas`, `Moodboard`, `Inbox`, `Pipeline`) e tarefas iniciais.
+  - Adicionados métodos `list_views`, `get_view` e `update_view` em `NotionClient` para migrar e renomear views já existentes sem perda de dados ao rodar `notion_hub.py theme`.
+- Adicionado `NOTION_DEV_PAGE_ID` em `.env.example` e validada toda a suíte offline em `scripts/test_notion_hub.py` (`15` testes passando).
+
+### Contexto / Porquê
+- Preparar o workspace do Notion para crescer com outras áreas do coletivo Emorphosis sem poluição visual e sem concentrar todos os bancos concatenados em uma página só.
+
+---
+
 ## [2026-11-19] — Identidade Visual Emorphosis no Notion (`notion_hub.py theme` + Assets Oficiais)
 **Responsável:** Filipe (+ Antigravity)
 **Arquivos principais:** `docs/notion_assets/notion-cover.png`, `docs/notion_assets/notion-icon.png`, `scripts/notion_hub.py`, `scripts/test_notion_hub.py`, `docs/NOTION_HUB_SETUP.md`, `.agents/skills/emorphosis-notion-hub/SKILL.md`
