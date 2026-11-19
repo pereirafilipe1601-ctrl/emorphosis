@@ -83,9 +83,12 @@ emorphosis/
 │   ├── marcas.json               # JSON consolidado (idêntico a assets/data/marcas.json)
 │   ├── schema.sql                # Tabelas MySQL: marcas e inscritos_drops
 │   └── imagens_sem_link/         # Imagens movidas automaticamente por build_marcas.py se sem vínculo
+├── docs/                         # Guias internos (ex: NOTION_HUB_SETUP.md — excluído do FTP)
 ├── scripts/
 │   ├── build_marcas.py           # Gera m4rcas.html + assets/data/marcas.json + database/marcas.json
 │   ├── deploy_ftp.py             # Deploy FTPS incremental para Hostinger (lê .env)
+│   ├── notion_hub.py             # CLI Notion Dev Hub (API 2026-03-11: tarefas, ideias multimídia, DEVLOG sync)
+│   ├── test_notion_hub.py        # Testes unitários sem rede para notion_hub.py
 │   ├── drops_ai_parser.py        # Extrator Claude API de legendas do IG para .ics
 │   └── extract_brazil_border.ps1 # Extrai brazil_map_bounds.json a partir de home-bg.png
 ├── sonhos/                       # Diretório público de sonhos (/sonhos/index.html)
@@ -134,13 +137,17 @@ powershell -ExecutionPolicy Bypass -File scripts/extract_brazil_border.ps1
 # 6. Extrair evento de legenda de post para .ics usando Claude API (requer ANTHROPIC_API_KEY no .env)
 python scripts/drops_ai_parser.py "Texto da legenda do post do drop"
 
-# 7. Deploy para produção Hostinger via FTPS (ATENÇÃO: publica direto no ar!)
+# 7. Gerenciar Notion Dev Hub (ver docs/NOTION_HUB_SETUP.md) e rodar testes unitários
+python scripts/notion_hub.py doctor
+python -m unittest scripts/test_notion_hub.py -v
+
+# 8. Deploy para produção Hostinger via FTPS (ATENÇÃO: publica direto no ar!)
 python scripts/deploy_ftp.py
 # Para forçar reenvio de imagens de marcas mesmo com mesmo tamanho:
 python scripts/deploy_ftp.py --force-marcas
 ```
 
-> **Testes & Lint**: não há suíte automatizada de testes ou linter configurada no momento. Após alterações, rode `python scripts/build_marcas.py` (se afetar catálogo) e valide no navegador (`H0M3`, `M4RCAS`, `C4L3NDAR10`, `marca.html?m=aevus`, `S0BR3`, `/sonhos/`).
+> **Testes & Lint**: há testes unitários para `scripts/notion_hub.py` (`python -m unittest scripts/test_notion_hub.py -v`); para o restante do site, rode `python scripts/build_marcas.py` (se afetar catálogo) e valide no navegador (`H0M3`, `M4RCAS`, `C4L3NDAR10`, `marca.html?m=aevus`, `S0BR3`, `/sonhos/`).
 
 ---
 

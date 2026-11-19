@@ -87,6 +87,11 @@ O repositório inclui hooks nativos do Antigravity em [.agents/hooks.json](./.ag
 python scripts/deploy_ftp.py
 ```
 
+### Controle de Tarefas & Cofre de Ideias (Notion Dev Hub + Antigravity)
+O projeto conta com integração híbrida ao **Notion** (**Notion MCP Oficial** + CLI zero-dependências `scripts/notion_hub.py` usando Notion API `2026-03-11` com upload direto de áudios/vídeos/fotos e sync com `DEVLOG.md`).
+- Guia completo do zero: [docs/NOTION_HUB_SETUP.md](./docs/NOTION_HUB_SETUP.md)
+- Skill do Antigravity: [.agents/skills/emorphosis-notion-hub/SKILL.md](./.agents/skills/emorphosis-notion-hub/SKILL.md)
+
 ---
 
 ## Estrutura Resumida
@@ -95,5 +100,6 @@ python scripts/deploy_ftp.py
 - `assets/` — CSS (`style.css`), JS Vanilla (`i18n.js`, `main.js`, `marcas-app.js`, `marca-profile.js`), dados JSON e mídias
 - `api/` — Endpoints PHP e armazenamento runtime protegido em `api/storage/`
 - `database/` — Lista mestre de marcas, preços, localizações e `schema.sql`
-- `scripts/` — Scripts Python de build (`build_marcas.py`), deploy (`deploy_ftp.py`), IA (`drops_ai_parser.py`) e PowerShell (`extract_brazil_border.ps1`)
-- `.agents/` — Regras e skills compartilhadas do Antigravity para este repositório
+- `docs/` — Guias internos de operação e integrações (excluído do deploy FTP)
+- `scripts/` — Scripts Python de build (`build_marcas.py`), deploy (`deploy_ftp.py`), Notion Hub (`notion_hub.py`), IA (`drops_ai_parser.py`) e PowerShell (`extract_brazil_border.ps1`)
+- `.agents/` — Regras, hooks e skills compartilhadas do Antigravity para este repositório

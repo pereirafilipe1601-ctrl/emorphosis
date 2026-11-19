@@ -25,6 +25,7 @@ EXCLUDE_NAMES = {
     "GEMINI.md",
     "README.md",
     "DEVLOG.md",
+    "docs",
     "scripts",
     "database",
     "__pycache__",

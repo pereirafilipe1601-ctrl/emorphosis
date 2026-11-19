@@ -7,6 +7,21 @@ Mantido separado do [GEMINI.md](./GEMINI.md) para respeitar o limite de `24.000`
 
 ---
 
+## [2026-11-19] — Emorphosis Notion Dev Hub (Tarefas + Cofre de Ideias Multimídia + Antigravity)
+**Responsável:** Filipe (+ Antigravity)
+**Arquivos principais:** `scripts/notion_hub.py`, `scripts/test_notion_hub.py`, `docs/NOTION_HUB_SETUP.md`, `.agents/skills/emorphosis-notion-hub/SKILL.md`, `.env.example`, `scripts/deploy_ftp.py`, `README.md`, `GEMINI.md`
+
+### O que mudou
+- Criado `scripts/notion_hub.py` em Python stdlib (zero dependências) compatível com **Notion API `2026-03-11`** (`data_sources`, `Views API` e `File Upload API` com `single_part` até 20 MiB e `multi_part` em streaming de 10 MiB para áudios/vídeos pesados de até 5 GiB no Notion Plus/Business).
+- Implementados comandos `doctor`, `bootstrap` (provisionamento automático dos bancos `📋 Dev Task Tracker` e `💡 Idea & Media Vault`, relação bidirecional `Ideia Origem` ⇄ `Tarefas Geradas`, 6 views e seed do backlog do `GEMINI.md`), `tasks` (`list`/`add`/`update`), `ideas` (`list`/`add`/`attach`/`promote`) e `devlog sync` (prévia/escrita no `DEVLOG.md`).
+- Adicionados testes unitários offline em `scripts/test_notion_hub.py`, guia completo do zero em `docs/NOTION_HUB_SETUP.md` (incluindo conexão do Notion MCP oficial `https://mcp.notion.com/mcp` no Antigravity) e skill compartilhada `.agents/skills/emorphosis-notion-hub/SKILL.md`.
+- Adicionadas variáveis `NOTION_*` em `.env.example` e incluída a pasta `docs` em `EXCLUDE_NAMES` de `scripts/deploy_ftp.py` para manter documentação interna fora da Hostinger.
+
+### Contexto / Porquê
+- Centralizar o controle de tarefas dos desenvolvedores e o repositório multimídia de ideias (áudios, vídeos, fotos e links) no Notion integrado ao Google Antigravity, eliminando setup manual propenso a erro e mantendo sincronia direta com o `DEVLOG.md`.
+
+---
+
 ## [2026-11-19] — Automação Total de Sync Git & Suporte a Edição Paralela
 **Responsável:** Arquivobrasileiro / Filipe (+ Antigravity)
 **Arquivos principais:** `.agents/hooks.json`, `.agents/hooks/git_sync_hook.py`, `.gitattributes`, `.agents/rules/emorphosis-conventions.md`, `README.md`, `GEMINI.md`, `scripts/deploy_ftp.py`
