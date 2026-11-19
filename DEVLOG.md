@@ -19,6 +19,16 @@ Mantido separado do [GEMINI.md](./GEMINI.md) para respeitar o limite de `24.000`
 
 ---
 
+## [2026-11-19] — Capa do Calendário (`calendar-bg.png`) na Raiz e Todas as Subáreas do Notion
+**Responsável:** Filipe (+ Antigravity)
+**Arquivos principais:** `assets/img/calendar-bg.png`, `scripts/notion_hub.py`, `scripts/test_notion_hub.py`, `docs/NOTION_HUB_SETUP.md`, `.agents/skills/emorphosis-notion-hub/SKILL.md`
+- **O que mudou:**
+  - Substituída a capa gerada (`docs/notion_assets/notion-cover.png`, removida do repositório) pelo plano de fundo oficial do calendário (`assets/img/calendar-bg.png`) em `scripts/notion_hub.py` (`NOTION_THEME_COVER_PATH`, `--cover`).
+  - Adicionado `_upload_cover_payload` para enviar `calendar-bg.png` uma única vez por execução (`Upload once, attach many times`) e reutilizar o `file_upload.id` em página raiz, subpágina `Desenvolvimento`, bancos de dados e demais subáreas.
+  - Adicionado `_apply_cover_to_subareas` em `cmd_theme` (inclusive com `--skip-layout`), percorrendo recursivamente `child_page`s aninhadas, containers (`column_list`, `column`, `toggle`, `callout`, `synced_block`) e `child_database`s de página inteira (`is_inline: False`).
+  - Atualizados os testes em `scripts/test_notion_hub.py` e a documentação em `docs/NOTION_HUB_SETUP.md` e `.agents/skills/emorphosis-notion-hub/SKILL.md`.
+- **Contexto / Porquê:** Alinhar visualmente o workspace inteiro no Notion (página principal `EMORPHOSIS` e todas as subáreas do time) com a estética oficial do `C4L3NDAR10` do site, mantendo o ícone `docs/notion_assets/notion-icon.png` na raiz e preservando as capas individuais de cards dos bancos (ex: `Fit Lab`).
+
 ## [2026-11-19] — Reestruturação Multi-Página do Notion (`EMORPHOSIS` -> `Desenvolvimento`) & Remoção de AI Slop
 **Responsável:** Filipe (+ Antigravity)
 **Arquivos principais:** `docs/notion_assets/notion-cover.png`, `scripts/notion_hub.py`, `scripts/test_notion_hub.py`, `.env.example`, `docs/NOTION_HUB_SETUP.md`, `.agents/skills/emorphosis-notion-hub/SKILL.md`

@@ -42,7 +42,7 @@ ROOT = Path(__file__).resolve().parent.parent
 ENV_PATH = ROOT / ".env"
 DEVLOG_PATH = ROOT / "DEVLOG.md"
 NOTION_ASSETS_DIR = ROOT / "docs" / "notion_assets"
-NOTION_THEME_COVER_PATH = NOTION_ASSETS_DIR / "notion-cover.png"
+NOTION_THEME_COVER_PATH = ROOT / "assets" / "img" / "calendar-bg.png"
 NOTION_THEME_ICON_PATH = NOTION_ASSETS_DIR / "notion-icon.png"
 FITLAB_SAMPLE_COVER_PATH = ROOT / "assets" / "img" / "fitlab" / "aevus-jaqueta.png"
 
@@ -912,26 +912,35 @@ def _set_green_icon(
             continue
 
 
+def _upload_cover_payload(
+    client: NotionClient,
+    cover_path: Path | None = NOTION_THEME_COVER_PATH,
+) -> dict[str, Any] | None:
+    if not cover_path or not cover_path.exists():
+        return None
+    cover_up = client.upload_file(cover_path)
+    print(f"  [OK] Capa enviada ({cover_path.name})")
+    return {"type": "file_upload", "file_upload": {"id": cover_up["id"]}}
+
+
 def _apply_root_branding(
     client: NotionClient,
     root_page_id: str,
     root_page: dict[str, Any],
     *,
-    cover_path: Path | None = NOTION_THEME_COVER_PATH,
+    cover_payload: dict[str, Any] | None = None,
     icon_path: Path | None = NOTION_THEME_ICON_PATH,
 ) -> None:
     title_key = _page_title_prop_key(root_page)
     page_patch: dict[str, Any] = {
         "properties": {title_key: {"title": split_rich_text("EMORPHOSIS")}}
     }
-    if cover_path and cover_path.exists():
-        cover_up = client.upload_file(cover_path)
-        page_patch["cover"] = {"type": "file_upload", "file_upload": {"id": cover_up["id"]}}
-        print(f"  [OK] Capa Emorphosis enviada ({cover_path.name})")
+    if cover_payload:
+        page_patch["cover"] = cover_payload
     if icon_path and icon_path.exists():
         icon_up = client.upload_file(icon_path)
         page_patch["icon"] = {"type": "file_upload", "file_upload": {"id": icon_up["id"]}}
-        print(f"  [OK] Ícone Matrix neon enviado ({icon_path.name})")
+        print(f"  [OK] Ícone enviado ({icon_path.name})")
     client.update_page(root_page_id, page_patch)
 
 
@@ -939,12 +948,11 @@ def _apply_dev_page_branding(
     client: NotionClient,
     dev_page_id: str,
     *,
-    cover_path: Path | None = NOTION_THEME_COVER_PATH,
+    cover_payload: dict[str, Any] | None = None,
 ) -> None:
     patch: dict[str, Any] = {"properties": {"title": {"title": split_rich_text("Desenvolvimento")}}}
-    if cover_path and cover_path.exists():
-        cover_up = client.upload_file(cover_path)
-        patch["cover"] = {"type": "file_upload", "file_upload": {"id": cover_up["id"]}}
+    if cover_payload:
+        patch["cover"] = cover_payload
     client.update_page(dev_page_id, patch)
     _set_green_icon(
         client,
@@ -961,7 +969,7 @@ def _apply_database_branding(
     clean_title: str | None = None,
     parent_page_id: str | None = None,
     make_full_page: bool = False,
-    cover_path: Path | None = NOTION_THEME_COVER_PATH,
+    cover_payload: dict[str, Any] | None = None,
     icon_candidates: tuple[str, ...],
 ) -> None:
     if parent_page_id or make_full_page or clean_title:
@@ -981,17 +989,82 @@ def _apply_database_branding(
         if structural_patch:
             client.update_database(db_id, structural_patch)
 
-    if cover_path and cover_path.exists():
+    if cover_payload:
         try:
-            cover_up = client.upload_file(cover_path)
-            client.update_database(
-                db_id,
-                {"cover": {"type": "file_upload", "file_upload": {"id": cover_up["id"]}}},
-            )
+            client.update_database(db_id, {"cover": cover_payload})
         except NotionAPIError:
             pass
 
     _set_green_icon(client, target_id=db_id, kind="database", icon_candidates=icon_candidates)
+
+
+def _apply_cover_to_subareas(
+    client: NotionClient,
+    parent_block_id: str,
+    *,
+    cover_payload: dict[str, Any],
+    visited: set[str] | None = None,
+    covered: set[str] | None = None,
+) -> int:
+    seen = visited if visited is not None else set()
+    patched = covered if covered is not None else set()
+    if parent_block_id in seen:
+        return 0
+    seen.add(parent_block_id)
+
+    try:
+        children = client.list_block_children(parent_block_id)
+    except NotionAPIError:
+        return 0
+
+    updated = 0
+    for blk in children:
+        btype = blk.get("type", "")
+        bid = blk.get("id", "")
+        if not bid:
+            continue
+
+        if btype == "child_page":
+            if bid not in patched:
+                patched.add(bid)
+                try:
+                    client.update_page(bid, {"cover": cover_payload})
+                    updated += 1
+                except NotionAPIError:
+                    pass
+            updated += _apply_cover_to_subareas(
+                client,
+                bid,
+                cover_payload=cover_payload,
+                visited=seen,
+                covered=patched,
+            )
+        elif btype == "child_database":
+            if bid not in patched:
+                patched.add(bid)
+                try:
+                    db_meta = client.get_database(bid)
+                    if not db_meta.get("is_inline", False):
+                        client.update_database(bid, {"cover": cover_payload})
+                        updated += 1
+                except NotionAPIError:
+                    pass
+        elif blk.get("has_children") and btype in (
+            "column_list",
+            "column",
+            "toggle",
+            "callout",
+            "synced_block",
+        ):
+            updated += _apply_cover_to_subareas(
+                client,
+                bid,
+                cover_payload=cover_payload,
+                visited=seen,
+                covered=patched,
+            )
+
+    return updated
 
 
 def _clean_database_views(client: NotionClient, db_id: str) -> None:
@@ -1197,11 +1270,12 @@ def cmd_theme(
 
     print(f"1/4 Aplicando identidade EMORPHOSIS na página raiz ({root_page_id})...")
     root_page = client.get_page(root_page_id)
+    cover_payload = _upload_cover_payload(client, cover_path)
     _apply_root_branding(
         client,
         root_page_id,
         root_page,
-        cover_path=cover_path,
+        cover_payload=cover_payload,
         icon_path=icon_path,
     )
 
@@ -1261,7 +1335,7 @@ def cmd_theme(
             dev_page_id = dev_created["id"]
             print(f"  [OK] Subpágina Desenvolvimento criada ({dev_page_id})")
 
-        _apply_dev_page_branding(client, dev_page_id, cover_path=cover_path)
+        _apply_dev_page_branding(client, dev_page_id, cover_payload=cover_payload)
 
         # Converte e move cada banco para página dedicada dentro de Desenvolvimento
         if tasks_db_id:
@@ -1271,7 +1345,7 @@ def cmd_theme(
                 clean_title="Dev Task Tracker",
                 parent_page_id=dev_page_id,
                 make_full_page=True,
-                cover_path=cover_path,
+                cover_payload=cover_payload,
                 icon_candidates=("checklist", "list", "check", "document", "tag"),
             )
             _clean_database_views(client, tasks_db_id)
@@ -1283,7 +1357,7 @@ def cmd_theme(
                 clean_title="Idea & Media Vault",
                 parent_page_id=dev_page_id,
                 make_full_page=True,
-                cover_path=cover_path,
+                cover_payload=cover_payload,
                 icon_candidates=("lightbulb", "bulb", "light-bulb", "bolt", "layers"),
             )
             _clean_database_views(client, ideas_db_id)
@@ -1356,22 +1430,33 @@ def cmd_theme(
     else:
         print("2/4 Layout preservado (--skip-layout).")
         if dev_page_id:
-            _apply_dev_page_branding(client, dev_page_id, cover_path=cover_path)
+            _apply_dev_page_branding(client, dev_page_id, cover_payload=cover_payload)
         if tasks_db_id:
             _apply_database_branding(
                 client,
                 tasks_db_id,
-                cover_path=cover_path,
+                cover_payload=cover_payload,
                 icon_candidates=("checklist", "list", "check", "document", "tag"),
             )
         if ideas_db_id:
             _apply_database_branding(
                 client,
                 ideas_db_id,
-                cover_path=cover_path,
+                cover_payload=cover_payload,
                 icon_candidates=("lightbulb", "bulb", "light-bulb", "bolt", "layers"),
             )
-        print("3/4 Capas e ícones atualizados.")
+        print("3/4 Ícones e estrutura atualizados.")
+
+    # Garante aplicação da capa do calendário em TODAS as subáreas (inclusive novas áreas adicionadas no Notion)
+    if cover_payload:
+        already_patched = {x for x in (dev_page_id, tasks_db_id, ideas_db_id) if x}
+        extra_count = _apply_cover_to_subareas(
+            client,
+            root_page_id,
+            cover_payload=cover_payload,
+            covered=set(already_patched),
+        )
+        print(f"  [OK] Capa aplicada na página raiz e em {len(already_patched) + extra_count} subárea(s).")
 
     print("4/4 Verificando seed inicial e salvando IDs...")
     if tasks_ds_id and include_layout:
@@ -1406,7 +1491,8 @@ def cmd_bootstrap(
     root_page_id = extract_notion_id(page_id_raw)
     print(f"1/5 Configurando página raiz EMORPHOSIS e subpágina Desenvolvimento ({root_page_id})...")
     root_page = client.get_page(root_page_id)
-    _apply_root_branding(client, root_page_id, root_page)
+    cover_payload = _upload_cover_payload(client, NOTION_THEME_COVER_PATH)
+    _apply_root_branding(client, root_page_id, root_page, cover_payload=cover_payload)
 
     client.append_block_children(root_page_id, [_build_section_heading("ÁREAS")])
     dev_page = client.create_page(
@@ -1416,7 +1502,7 @@ def cmd_bootstrap(
         }
     )
     dev_page_id = dev_page["id"]
-    _apply_dev_page_branding(client, dev_page_id)
+    _apply_dev_page_branding(client, dev_page_id, cover_payload=cover_payload)
     _append_links_section(
         client,
         root_page_id,
@@ -1442,6 +1528,7 @@ def cmd_bootstrap(
     _apply_database_branding(
         client,
         ideas_db_id,
+        cover_payload=cover_payload,
         icon_candidates=("lightbulb", "bulb", "light-bulb", "bolt", "layers"),
     )
     print(f"  [OK] Idea Vault DB={ideas_db_id} | DS={ideas_ds_id}")
@@ -1483,6 +1570,7 @@ def cmd_bootstrap(
     _apply_database_branding(
         client,
         tasks_db_id,
+        cover_payload=cover_payload,
         icon_candidates=("checklist", "list", "check", "document", "tag"),
     )
     print(f"  [OK] Task Tracker DB={tasks_db_id} | DS={tasks_ds_id}")
@@ -2252,7 +2340,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="Reorganiza a estrutura EMORPHOSIS + Desenvolvimento sem apagar dados, limpa views e aplica capa/ícones",
     )
     p_theme.add_argument("--page-id", help="URL ou ID da página raiz (padrão: NOTION_ROOT_PAGE_ID do .env)")
-    p_theme.add_argument("--cover", help="Caminho para imagem de capa customizada (padrão: docs/notion_assets/notion-cover.png)")
+    p_theme.add_argument("--cover", help="Caminho para imagem de capa customizada (padrão: assets/img/calendar-bg.png)")
     p_theme.add_argument("--icon", help="Caminho para imagem de ícone customizada (padrão: docs/notion_assets/notion-icon.png)")
     p_theme.add_argument("--skip-layout", action="store_true", help="Atualiza apenas capa/ícones sem reorganizar blocos ou subpáginas")
 

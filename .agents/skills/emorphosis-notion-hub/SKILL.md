@@ -23,8 +23,8 @@ Fluxo operacional para o workspace **EMORPHOSIS** no Notion (área inicial **Des
 
 ## Esquema Padrão do Hub
 
-- **Página raiz:** `EMORPHOSIS` (`NOTION_ROOT_PAGE_ID`) — portal do time com `docs/notion_assets/notion-cover.png`, `docs/notion_assets/notion-icon.png`, links da plataforma e subpágina da equipe.
-- **Subpágina inicial:** `Desenvolvimento` (`NOTION_DEV_PAGE_ID`) — abriga os bancos separados em página inteira (sem concatenação inline).
+- **Página raiz:** `EMORPHOSIS` (`NOTION_ROOT_PAGE_ID`) — portal do time com capa `assets/img/calendar-bg.png` (propagada também para todas as subáreas), ícone `docs/notion_assets/notion-icon.png`, links da plataforma e subpágina da equipe.
+- **Subpágina inicial:** `Desenvolvimento` (`NOTION_DEV_PAGE_ID`) — abriga os bancos separados em página inteira (sem concatenação inline) com a mesma capa `assets/img/calendar-bg.png`.
 - **Banco 1 — `Dev Task Tracker`** (`NOTION_TASKS_DB_ID` / `NOTION_TASKS_DS_ID`):
   - Views: `Kanban`, `Prioridades Ativas`, `Concluídas`.
   - Propriedades: `Tarefa` (title), `Status` (`Backlog`, `A Fazer`, `Em Andamento`, `Em Revisão`, `Concluído`), `Prioridade` (`Crítica`, `Alta`, `Média`, `Baixa`), `Responsável` (`Filipe`, `Arquivobrasileiro`, `Ambos`), `Área` (`H0M3 / Mapa`, `M4RCAS / Catálogo`, `Fit Lab`, `C4L3NDAR10`, `Backend PHP / MySQL`, `Design / UI`, `Infra / Deploy`), `Tipo`, `Prazo`, `Branch / PR`, `Ideia Origem` (relation), `Registrado no DEVLOG` (checkbox).

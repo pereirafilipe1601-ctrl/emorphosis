@@ -61,7 +61,7 @@ Este guia configura do zero o workspace **EMORPHOSIS** no Notion (começando pel
    ```
 
 O que o comando `bootstrap` cria automaticamente:
-- Página raiz **`EMORPHOSIS`** com capa (`docs/notion_assets/notion-cover.png`), ícone (`docs/notion_assets/notion-icon.png`) e links rápidos da plataforma (`H0M3`, `M4RCAS`, `C4L3NDAR10`, `S0BR3`, `SONHOS`, `GITHUB`).
+- Página raiz **`EMORPHOSIS`** com capa oficial do calendário (`assets/img/calendar-bg.png`, aplicada também em todas as subáreas), ícone (`docs/notion_assets/notion-icon.png`) e links rápidos da plataforma (`H0M3`, `M4RCAS`, `C4L3NDAR10`, `S0BR3`, `SONHOS`, `GITHUB`).
 - Subpágina **`Desenvolvimento`** (primeira área ativa do time) contendo os dois bancos separados em páginas dedicadas (`is_inline: false`), sem nada empilhado inline:
   - **`Dev Task Tracker`** — views **`Kanban`**, **`Prioridades Ativas`** e **`Concluídas`**.
   - **`Idea & Media Vault`** — views **`Moodboard`**, **`Inbox`** e **`Pipeline`**.

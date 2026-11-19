@@ -711,7 +711,38 @@ class NotionHubTests(unittest.TestCase):
         fitlab_patch = [p for m, path, p in client.calls if m == "PATCH" and path == f"/pages/{fitlab_id}"][-1]
         self.assertIn("cover", fitlab_patch)
 
-        # 8. Idempotência: rodar theme uma segunda vez reutiliza Desenvolvimento (não cria página duplicada)
+        # 8. Capa enviada uma única vez (calendar-bg.png) e aplicada na raiz + todas as subáreas (inclusive novas áreas/subpáginas aninhadas)
+        cover_uploads = [u for u in client.uploads if u["filename"] == "calendar-bg.png"]
+        self.assertEqual(len(cover_uploads), 1)
+        expected_cover = {"type": "file_upload", "file_upload": {"id": cover_uploads[0]["id"]}}
+        self.assertEqual(root_patch["cover"], expected_cover)
+        dev_patches = [p for m, path, p in client.calls if m == "PATCH" and path == f"/pages/{dev_id}"]
+        self.assertTrue(any(p and p.get("cover") == expected_cover for p in dev_patches))
+        tasks_db_patches = [p for m, path, p in client.calls if m == "PATCH" and path == f"/databases/{tasks_db_id}"]
+        ideas_db_patches = [p for m, path, p in client.calls if m == "PATCH" and path == f"/databases/{ideas_db_id}"]
+        self.assertTrue(any(p and p.get("cover") == expected_cover for p in tasks_db_patches))
+        self.assertTrue(any(p and p.get("cover") == expected_cover for p in ideas_db_patches))
+
+        # 9. Idempotência + subáreas extras (outra área do time + subpágina aninhada + coluna) recebem a mesma capa
+        creative_id = "eeeeeeee-eeee-eeee-eeee-000000000001"
+        nested_dev_doc_id = "eeeeeeee-eeee-eeee-eeee-000000000002"
+        col_area_id = "eeeeeeee-eeee-eeee-eeee-000000000003"
+        client.children_by_parent[root_id].append(
+            {"id": creative_id, "type": "child_page", "child_page": {"title": "Criativo"}}
+        )
+        client.children_by_parent[root_id].append(
+            {"id": "area-cols", "type": "column_list", "has_children": True, "column_list": {}}
+        )
+        client.children_by_parent["area-cols"] = [
+            {"id": "area-col-1", "type": "column", "has_children": True, "column": {}}
+        ]
+        client.children_by_parent["area-col-1"] = [
+            {"id": col_area_id, "type": "child_page", "child_page": {"title": "Curadoria"}}
+        ]
+        client.children_by_parent[dev_id].append(
+            {"id": nested_dev_doc_id, "type": "child_page", "child_page": {"title": "Arquitetura"}}
+        )
+
         client.page_by_id[fitlab_id]["cover"] = {"type": "file", "file": {"url": "https://cdn.notion.so/aevus.png"}}
         client.query_override_by_ds[ideas_ds_id][0]["cover"] = client.page_by_id[fitlab_id]["cover"]
         client.query_override_by_ds[tasks_ds_id][0]["properties"]["Tarefa"]["title"] = [
@@ -728,6 +759,12 @@ class NotionHubTests(unittest.TestCase):
         self.assertEqual(dev_page_creates_before, dev_page_creates_after)
         self.assertNotIn("user-div", client.deleted_blocks)
         self.assertNotIn("user-note", client.deleted_blocks)
+
+        second_cover_id = [u for u in client.uploads if u["filename"] == "calendar-bg.png"][-1]["id"]
+        second_cover = {"type": "file_upload", "file_upload": {"id": second_cover_id}}
+        for extra_id in (creative_id, nested_dev_doc_id, col_area_id):
+            patches = [p for m, path, p in client.calls if m == "PATCH" and path == f"/pages/{extra_id}"]
+            self.assertTrue(any(p and p.get("cover") == second_cover for p in patches), f"Faltou capa em {extra_id}")
 
     def test_cmd_theme_fallback_when_callout_icon_rejected_and_skip_layout(self) -> None:
         client = FakeNotionClient()
@@ -756,10 +793,14 @@ class NotionHubTests(unittest.TestCase):
         # Callout com icon nativo falha -> fallback envia paragraph limpo (sem emoji!)
         self.assertEqual([b["type"] for b in root_appends[2]["children"]], ["divider", "heading_3", "paragraph"])
 
-        # Testa --skip-layout via CLI main()
+        # Testa --skip-layout via CLI main() (continua aplicando capa na raiz e subáreas)
         client_skip = FakeNotionClient()
         client_skip.page_by_id[root_id] = client.page_by_id[root_id]
-        skip_env = {"NOTION_API_KEY": "ntn_fake", "NOTION_ROOT_PAGE_ID": root_id}
+        client_skip.page_by_id[dev_id] = client.page_by_id[dev_id]
+        client_skip.children_by_parent[root_id] = [
+            {"id": dev_id, "type": "child_page", "child_page": {"title": "Desenvolvimento"}}
+        ]
+        skip_env = {"NOTION_API_KEY": "ntn_fake", "NOTION_ROOT_PAGE_ID": root_id, "NOTION_DEV_PAGE_ID": dev_id}
         with mock.patch.object(nh, "load_env", return_value=skip_env), mock.patch.object(
             nh, "NotionClient", return_value=client_skip
         ), mock.patch("sys.stdout", new_callable=nh.io.StringIO):
@@ -767,7 +808,8 @@ class NotionHubTests(unittest.TestCase):
             self.assertEqual(rc, 0)
         self.assertEqual(client_skip.deleted_blocks, [])
         self.assertEqual([c for c in client_skip.calls if c[0] == "PATCH" and "/blocks/" in c[1]], [])
-        self.assertEqual([u["filename"] for u in client_skip.uploads], ["notion-cover.png", "notion-icon.png"])
+        self.assertEqual([u["filename"] for u in client_skip.uploads], ["calendar-bg.png", "notion-icon.png"])
+        self.assertTrue(any(path == f"/pages/{dev_id}" and "cover" in (p or {}) for m, path, p in client_skip.calls if m == "PATCH"))
 
     def test_enrich_fitlab_seed_cover_skips_when_already_populated(self) -> None:
         client = FakeNotionClient()
