@@ -60,6 +60,15 @@ Funciona para visualizar layout, catálogo (`m4rcas.html`), Quiz, Fit Lab e `mar
 
 ---
 
+### Sincronização Automática em Equipe (Antigravity + GitHub)
+
+O repositório inclui hooks nativos do Antigravity em [.agents/hooks.json](./.agents/hooks.json) ([git_sync_hook.py](./.agents/hooks/git_sync_hook.py)) e [.gitattributes](./.gitattributes):
+- **Ao abrir ou enviar uma mensagem:** faz `git pull --rebase --autostash` automaticamente para trazer alterações do colega.
+- **Ao concluir uma tarefa:** exige/atualiza o [DEVLOG.md](./DEVLOG.md), cria o commit e envia para `origin/main` automaticamente.
+- **Edição simultânea no mesmo arquivo:** o `.gitattributes` (`DEVLOG.md merge=union`) mescla automaticamente entradas simultâneas no diário; se dois devs editarem exatamente as mesmas linhas de código ao mesmo tempo, o hook mantém o estado seguro e orienta o Antigravity a mesclar o conflito antes do push.
+
+---
+
 ## Fluxo de Trabalho Comum
 
 ### Atualizar o catálogo de marcas

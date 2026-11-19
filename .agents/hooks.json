@@ -1,0 +1,25 @@
+{
+  "emorphosis-auto-sync": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "python ./hooks/git_sync_hook.py --event session_start",
+        "timeout": 20
+      }
+    ],
+    "PreInvocation": [
+      {
+        "type": "command",
+        "command": "python ./hooks/git_sync_hook.py --event pre_invocation",
+        "timeout": 20
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": "python ./hooks/git_sync_hook.py --event stop",
+        "timeout": 30
+      }
+    ]
+  }
+}

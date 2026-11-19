@@ -7,6 +7,22 @@ Mantido separado do [GEMINI.md](./GEMINI.md) para respeitar o limite de `24.000`
 
 ---
 
+## [2026-11-19] — Automação Total de Sync Git & Suporte a Edição Paralela
+**Responsável:** Arquivobrasileiro / Filipe (+ Antigravity)
+**Arquivos principais:** `.agents/hooks.json`, `.agents/hooks/git_sync_hook.py`, `.gitattributes`, `.agents/rules/emorphosis-conventions.md`, `README.md`, `GEMINI.md`, `scripts/deploy_ftp.py`
+
+### O que mudou
+- Configurados lifecycle hooks do Antigravity em `.agents/hooks.json` executando `.agents/hooks/git_sync_hook.py`:
+  - `SessionStart` e `PreInvocation` (no início do turno, throttle de 45s): executam `git fetch` + `git pull --rebase --autostash origin main` automaticamente.
+  - `Stop`: exige registro atualizado no `DEVLOG.md` quando há código alterado, verifica proteção contra arquivos sensíveis, faz `git commit`, `git pull --rebase --autostash` e `git push origin main`.
+- Criado `.gitattributes` com `DEVLOG.md merge=union` para mesclar automaticamente entradas simultâneas no diário sem conflito manual.
+- Em conflitos reais nas mesmas linhas de um arquivo de código, o hook aborta/pausa com segurança e instrui o próprio Antigravity (`decision: continue`) a mesclar preservando as alterações dos dois desenvolvedores.
+
+### Contexto / Porquê
+- Eliminar a dependência de rodar `git pull`/`git commit`/`git push` manualmente entre os dois computadores da equipe e permitir colaboração paralela fluida sem conflitos no `DEVLOG.md`.
+
+---
+
 ## [2026-11-19] — Consolidação do Projeto, Segurança, Git/GitHub & Deploy
 **Responsável:** Arquivobrasileiro / Filipe (+ Antigravity)
 **Arquivos principais:** `GEMINI.md`, `README.md`, `DEVLOG.md`, `.env.example`, `.gitignore`, `.htaccess`, `.agents/**`, `api/config_loader.php`, `api/config.example.php`, `api/*.php`, `c4l3ndar10.html`, `marca.html`, `scripts/deploy_ftp.py`

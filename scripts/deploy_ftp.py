@@ -19,6 +19,7 @@ EXCLUDE_NAMES = {
     ".env",
     ".env.example",
     ".git",
+    ".gitattributes",
     ".gitignore",
     ".agents",
     "GEMINI.md",

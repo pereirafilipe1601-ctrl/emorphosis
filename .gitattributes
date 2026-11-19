@@ -1,0 +1,2 @@
+# Permite mesclar automaticamente edições simultâneas no DEVLOG.md sem conflito manual
+DEVLOG.md merge=union

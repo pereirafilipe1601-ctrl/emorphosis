@@ -92,7 +92,7 @@ emorphosis/
 └── _conversa_emorphosis/         # Histórico e auditorias antigas (ignorado no Git e no FTP)
 ```
 
-> **Histórico & Contexto Contínuo**: o `GEMINI.md` tem limite rígido de 24.000 bytes no Antigravity e guarda a arquitetura atual; o registro cronológico de alterações de cada dev e o porquê das decisões ficam em [DEVLOG.md](./DEVLOG.md). Consulte-o antes de grandes mudanças e atualize-o ao concluir tarefas.
+> **Histórico & Contexto Contínuo**: o `GEMINI.md` tem limite rígido de 24.000 bytes no Antigravity e guarda a arquitetura atual; o registro cronológico de alterações de cada dev e o porquê das decisões ficam em [DEVLOG.md](./DEVLOG.md) (com merge automático `merge=union` em `.gitattributes` e auto-sync via `.agents/hooks.json`). Consulte-o antes de grandes mudanças e atualize-o ao concluir tarefas.
 
 ---
 
