@@ -7,6 +7,18 @@ Mantido separado do [GEMINI.md](./GEMINI.md) para respeitar o limite de `24.000`
 
 ---
 
+## [2026-11-19] — Capa Oficial do Site (`home-bg.png`) Aplicada no Notion
+**Responsável:** Filipe (+ Antigravity)
+**Arquivos principais:** `docs/notion_assets/notion-cover.png`, `DEVLOG.md`
+
+### O que mudou
+- Substituída a capa anterior em `docs/notion_assets/notion-cover.png` pela arte oficial de fundo do site (`assets/img/home-bg.png`), enquadrada em canvas `#000000` de `1800×600` (faixa central `753×340`) para evitar corte no cabeçalho horizontal do Notion.
+
+### Contexto / Porquê
+- Utilizar diretamente a arte real da página inicial (`H0M3`) no Notion em vez de uma variação gerada.
+
+---
+
 ## [2026-11-19] — Reestruturação Multi-Página do Notion (`EMORPHOSIS` -> `Desenvolvimento`) & Remoção de AI Slop
 **Responsável:** Filipe (+ Antigravity)
 **Arquivos principais:** `docs/notion_assets/notion-cover.png`, `scripts/notion_hub.py`, `scripts/test_notion_hub.py`, `.env.example`, `docs/NOTION_HUB_SETUP.md`, `.agents/skills/emorphosis-notion-hub/SKILL.md`
