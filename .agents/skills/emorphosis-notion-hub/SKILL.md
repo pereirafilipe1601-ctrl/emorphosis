@@ -16,14 +16,14 @@ Fluxo operacional para o **EMORPHOSIS // DEV HUB** no Notion, combinando **Notio
    - Preferir para consultar tarefas, resumir ideias, editar texto de páginas, mover status rapidamente ou responder perguntas sobre o backlog durante o chat.
 2. **CLI local (`scripts/notion_hub.py`)**:
    - Preferir para:
-     - Provisionar/reconstruir a estrutura (`bootstrap`) e diagnosticar IDs (`doctor`).
+     - Provisionar/reconstruir a estrutura (`bootstrap`), aplicar/reaplicar a identidade visual Emorphosis (`theme`) e diagnosticar IDs (`doctor`).
      - Fazer **upload de arquivos locais** (áudio `.ogg`/`.m4a`/`.mp3`, vídeo `.mp4`/`.mov` inclusive > 20 MB via `multi_part`, fotos/prints `.png`/`.jpg`/`.webp` com definição automática de capa na Galeria).
      - Promover ideias para tarefas vinculadas (`ideas promote`) mantendo a relação bidirecional `Ideia Origem` ⇄ `Tarefas Geradas`.
      - Gerar/aplicar entradas no topo do `DEVLOG.md` a partir de tarefas concluídas (`devlog sync --apply`).
 
 ## Esquema Padrão do Hub
 
-- **Página raiz:** `EMORPHOSIS // DEV HUB` (`NOTION_ROOT_PAGE_ID`)
+- **Página raiz:** `EMORPHOSIS // DEV HUB` (`NOTION_ROOT_PAGE_ID`) — estilizada com `docs/notion_assets/notion-cover.png`, `docs/notion_assets/notion-icon.png` e blocos HUD verdes (`Ctrl+Shift+L` + `Full width` no Notion).
 - **Banco 1 — `📋 Dev Task Tracker`** (`NOTION_TASKS_DB_ID` / `NOTION_TASKS_DS_ID`):
   - `Tarefa` (title), `Status` (status: `Backlog`, `A Fazer`, `Em Andamento`, `Em Revisão`, `Concluído`), `Prioridade` (`Crítica`, `Alta`, `Média`, `Baixa`), `Responsável` (`Filipe`, `Arquivobrasileiro`, `Ambos`), `Área` (`H0M3 / Mapa`, `M4RCAS / Catálogo`, `Fit Lab`, `C4L3NDAR10`, `Backend PHP / MySQL`, `Design / UI`, `Infra / Deploy`), `Tipo`, `Prazo`, `Branch / PR`, `Ideia Origem` (relation), `Registrado no DEVLOG` (checkbox).
 - **Banco 2 — `💡 Idea & Media Vault`** (`NOTION_IDEAS_DB_ID` / `NOTION_IDEAS_DS_ID`):
@@ -35,8 +35,11 @@ Fluxo operacional para o **EMORPHOSIS // DEV HUB** no Notion, combinando **Notio
 # Diagnóstico de token e bancos
 python scripts/notion_hub.py doctor
 
-# Setup inicial a partir da página raiz vazia (cria bancos, relação, views e seed)
+# Setup inicial a partir da página raiz vazia (cria bancos, relação, views, tema e seed)
 python scripts/notion_hub.py bootstrap --page-id "<URL_OU_ID>"
+
+# Aplicar/atualizar identidade visual Emorphosis (capa, ícone neon, HUD verde e preview Fit Lab)
+python scripts/notion_hub.py theme [--skip-layout]
 
 # Tarefas
 python scripts/notion_hub.py tasks list [--status "Em Andamento"] [--owner Filipe] [--json]

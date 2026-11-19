@@ -31,6 +31,11 @@ class FakeNotionClient(nh.NotionClient):
         self.calls: list[tuple[str, str, dict | None]] = []
         self.uploads: list[dict] = []
         self.fail_first_task_db = False
+        self.fail_column_list = False
+        self.children_by_parent: dict[str, list[dict]] = {}
+        self.deleted_blocks: list[str] = []
+        self.page_by_id: dict[str, dict] = {}
+        self.query_results_override: list[dict] | None = None
         self._page_counter = 0
 
     def request_json(self, method: str, path: str, payload: dict | None = None) -> dict:
@@ -40,6 +45,8 @@ class FakeNotionClient(nh.NotionClient):
 
         if method == "GET" and path.startswith("/pages/"):
             pid = path.split("/")[-1]
+            if pid in self.page_by_id:
+                return self.page_by_id[pid]
             return {
                 "object": "page",
                 "id": pid,
@@ -62,6 +69,26 @@ class FakeNotionClient(nh.NotionClient):
                     },
                 },
             }
+
+        if method == "GET" and "/blocks/" in path and "/children" in path:
+            bid = path.split("/blocks/")[1].split("/children")[0]
+            return {
+                "object": "list",
+                "results": self.children_by_parent.get(bid, []),
+                "has_more": False,
+                "next_cursor": None,
+            }
+
+        if method == "DELETE" and path.startswith("/blocks/"):
+            bid = path.split("/blocks/")[1]
+            self.deleted_blocks.append(bid)
+            return {"object": "block", "id": bid, "in_trash": True}
+
+        if method == "PATCH" and path.startswith("/blocks/") and path.endswith("/children"):
+            if self.fail_column_list and payload:
+                if any(b.get("type") == "column_list" for b in payload.get("children", [])):
+                    raise nh.NotionAPIError(400, "validation_error", "column_list unsupported in test")
+            return {"object": "list", "results": []}
 
         if method == "POST" and path == "/databases":
             title_txt = "".join(t["text"]["content"] for t in (payload or {}).get("title", []))
@@ -109,6 +136,12 @@ class FakeNotionClient(nh.NotionClient):
             return {"id": pid, "url": f"https://www.notion.so/{pid.replace('-', '')}"}
 
         if method == "POST" and path.endswith("/query"):
+            if self.query_results_override is not None:
+                return {
+                    "results": self.query_results_override,
+                    "has_more": False,
+                    "next_cursor": None,
+                }
             return {
                 "results": [
                     {
@@ -269,6 +302,25 @@ class NotionHubTests(unittest.TestCase):
             self.assertEqual(len(page_calls), 4)
             self.assertTrue(all(p["parent"]["type"] == "data_source_id" for p in page_calls))
 
+            # Verifica capa, ícone da página raiz, ícones verdes dos bancos e capa Fit Lab
+            root_patches = [
+                p for m, path, p in client.calls
+                if m == "PATCH" and path == "/pages/99999999-9999-9999-9999-999999999999"
+            ]
+            self.assertTrue(root_patches)
+            self.assertIn("cover", root_patches[-1])
+            self.assertIn("icon", root_patches[-1])
+            uploaded_names = [u["filename"] for u in client.uploads]
+            self.assertIn("notion-cover.png", uploaded_names)
+            self.assertIn("notion-icon.png", uploaded_names)
+            self.assertIn("aevus-jaqueta.png", uploaded_names)
+            db_patches = [
+                (path, p) for m, path, p in client.calls
+                if m == "PATCH" and path.startswith("/databases/")
+            ]
+            self.assertEqual(len(db_patches), 2)
+            self.assertTrue(all(p["icon"]["icon"]["color"] == "green" for _, p in db_patches))
+
     def test_create_idea_with_audio_image_and_link_sets_cover_and_blocks(self) -> None:
         client = FakeNotionClient()
         with tempfile.TemporaryDirectory() as tmp:
@@ -378,6 +430,188 @@ class NotionHubTests(unittest.TestCase):
             parsed = json.loads(out.getvalue())
             self.assertEqual(len(parsed), 1)
             self.assertEqual(parsed[0]["title"], "Integrar Notion Dev Hub")
+
+    def test_cmd_theme_restyles_root_page_idempotently_and_preserves_custom_blocks(self) -> None:
+        client = FakeNotionClient()
+        root_id = "8a89378c-be6b-83f3-bc24-81a553d09ed0"
+        ideas_db_id = "33333333-3333-3333-3333-333333333333"
+        tasks_db_id = "11111111-1111-1111-1111-111111111111"
+        fitlab_id = "cccccccc-cccc-cccc-cccc-000000000001"
+
+        client.children_by_parent = {
+            root_id: [
+                {
+                    "id": "old-banner",
+                    "type": "callout",
+                    "callout": {"rich_text": [{"plain_text": "EMORPHOSIS // DEV HUB"}]},
+                },
+                {"id": "old-cols", "type": "column_list", "has_children": True, "column_list": {}},
+                {"id": "old-div-top", "type": "divider", "divider": {}},
+                {
+                    "id": "old-h-ideas",
+                    "type": "heading_2",
+                    "heading_2": {"rich_text": [{"plain_text": "01 // IDEA & MEDIA VAULT"}]},
+                },
+                {"id": ideas_db_id, "type": "child_database", "child_database": {"title": "Idea & Media Vault"}},
+                {"id": "old-div-mid", "type": "divider", "divider": {}},
+                {
+                    "id": "old-h-tasks",
+                    "type": "heading_2",
+                    "heading_2": {"rich_text": [{"plain_text": "02 // DEV TASK TRACKER"}]},
+                },
+                {"id": tasks_db_id, "type": "child_database", "child_database": {"title": "Dev Task Tracker"}},
+                {"id": "user-div", "type": "divider", "divider": {}},
+                {
+                    "id": "user-note",
+                    "type": "paragraph",
+                    "paragraph": {"rich_text": [{"plain_text": "Notas manuais da equipe"}]},
+                },
+                {"id": "old-div-foot", "type": "divider", "divider": {}},
+                {
+                    "id": "old-toggle",
+                    "type": "toggle",
+                    "toggle": {"rich_text": [{"plain_text": "03 // TERMINAL CHEATSHEET & VISUAL"}]},
+                },
+            ],
+            "old-cols": [
+                {"id": "col-1", "type": "column", "has_children": True, "column": {}},
+            ],
+            "col-1": [
+                {
+                    "id": "col-1-callout",
+                    "type": "callout",
+                    "callout": {"rich_text": [{"plain_text": "00 // TERMINAL_NAV"}]},
+                }
+            ],
+        }
+        client.query_results_override = [
+            {
+                "id": fitlab_id,
+                "cover": None,
+                "properties": {
+                    "Ideia": {"type": "title", "title": [{"plain_text": "Expandir biblioteca do Fit Lab"}]},
+                    "Anexos / Capa": {"type": "files", "files": []},
+                },
+            }
+        ]
+        client.page_by_id[fitlab_id] = {
+            "object": "page",
+            "id": fitlab_id,
+            "url": "https://www.notion.so/fitlabseed",
+            "cover": None,
+            "properties": {
+                "Ideia": {"type": "title", "title": [{"plain_text": "Expandir biblioteca do Fit Lab"}]},
+                "Formatos": {"type": "multi_select", "multi_select": [{"name": "Texto / Briefing"}]},
+                "Anexos / Capa": {"type": "files", "files": []},
+            },
+        }
+
+        env = {
+            "NOTION_ROOT_PAGE_ID": root_id,
+            "NOTION_IDEAS_DB_ID": ideas_db_id,
+            "NOTION_IDEAS_DS_ID": "44444444-4444-4444-4444-444444444444",
+            "NOTION_TASKS_DB_ID": tasks_db_id,
+            "NOTION_TASKS_DS_ID": "22222222-2222-2222-2222-222222222222",
+        }
+        nh.cmd_theme(client, env)
+
+        # Chrome antigo removido, mas bancos e nota customizada (+ divider dela) preservados
+        self.assertEqual(
+            set(client.deleted_blocks),
+            {"old-banner", "old-cols", "old-div-top", "old-h-ideas", "old-div-mid", "old-h-tasks", "old-div-foot", "old-toggle"},
+        )
+        self.assertNotIn(ideas_db_id, client.deleted_blocks)
+        self.assertNotIn(tasks_db_id, client.deleted_blocks)
+        self.assertNotIn("user-div", client.deleted_blocks)
+        self.assertNotIn("user-note", client.deleted_blocks)
+
+        # Uploads e branding aplicados na página raiz e bancos
+        self.assertEqual([u["filename"] for u in client.uploads], ["notion-cover.png", "notion-icon.png", "aevus-jaqueta.png"])
+        root_patch = [p for m, path, p in client.calls if m == "PATCH" and path == f"/pages/{root_id}"][-1]
+        assert root_patch is not None
+        self.assertIn("cover", root_patch)
+        self.assertIn("icon", root_patch)
+        fitlab_patch = [p for m, path, p in client.calls if m == "PATCH" and path == f"/pages/{fitlab_id}"][-1]
+        assert fitlab_patch is not None
+        self.assertIn("cover", fitlab_patch)
+
+        # Posicionamento exato dos novos blocos HUD na página raiz
+        root_appends = [
+            p for m, path, p in client.calls
+            if m == "PATCH" and path == f"/blocks/{root_id}/children"
+        ]
+        self.assertEqual(len(root_appends), 3)
+        self.assertEqual(root_appends[0]["position"], {"type": "start"})
+        self.assertEqual([b["type"] for b in root_appends[0]["children"]], ["callout", "column_list", "divider", "heading_2"])
+        self.assertEqual(root_appends[1]["position"], {"type": "after_block", "after_block": {"id": ideas_db_id}})
+        self.assertEqual([b["type"] for b in root_appends[1]["children"]], ["divider", "heading_2"])
+        self.assertEqual(root_appends[2]["position"], {"type": "after_block", "after_block": {"id": tasks_db_id}})
+        self.assertEqual([b["type"] for b in root_appends[2]["children"]], ["divider", "toggle"])
+
+    def test_cmd_theme_fallback_without_columns_and_cli_skip_layout(self) -> None:
+        client = FakeNotionClient()
+        root_id = "8a89378c-be6b-83f3-bc24-81a553d09ed0"
+        ideas_db_id = "33333333-3333-3333-3333-333333333333"
+        client.fail_column_list = True
+        client.children_by_parent[root_id] = [
+            {"id": ideas_db_id, "type": "child_database", "child_database": {"title": "Idea & Media Vault"}}
+        ]
+        env = {"NOTION_ROOT_PAGE_ID": root_id, "NOTION_IDEAS_DB_ID": ideas_db_id}
+
+        nh.cmd_theme(client, env)
+        root_appends = [
+            p for m, path, p in client.calls
+            if m == "PATCH" and path == f"/blocks/{root_id}/children"
+        ]
+        # Primeira tentativa com column_list falha, fallback envia 2 callouts empilhados
+        self.assertEqual([b["type"] for b in root_appends[1]["children"]], ["callout", "callout", "callout", "divider", "heading_2"])
+
+        # Testa --skip-layout via CLI main()
+        client_skip = FakeNotionClient()
+        client_skip.children_by_parent[root_id] = [
+            {"id": ideas_db_id, "type": "child_database", "child_database": {"title": "Idea & Media Vault"}}
+        ]
+        skip_env = {
+            "NOTION_API_KEY": "ntn_fake",
+            "NOTION_ROOT_PAGE_ID": root_id,
+        }
+        with mock.patch.object(nh, "load_env", return_value=skip_env), mock.patch.object(
+            nh, "NotionClient", return_value=client_skip
+        ), mock.patch("sys.stdout", new_callable=nh.io.StringIO):
+            rc = nh.main(["theme", "--skip-layout"])
+            self.assertEqual(rc, 0)
+        self.assertEqual(client_skip.deleted_blocks, [])
+        self.assertEqual(
+            [c for c in client_skip.calls if c[0] == "PATCH" and c[1] == f"/blocks/{root_id}/children"],
+            [],
+        )
+        self.assertEqual([u["filename"] for u in client_skip.uploads], ["notion-cover.png", "notion-icon.png"])
+
+    def test_enrich_fitlab_seed_cover_skips_when_already_populated(self) -> None:
+        client = FakeNotionClient()
+        client.query_results_override = [
+            {
+                "id": "cccccccc-cccc-cccc-cccc-000000000009",
+                "cover": {"type": "file", "file": {"url": "https://cdn.notion.so/jaqueta.png"}},
+                "properties": {
+                    "Anexos / Capa": {
+                        "type": "files",
+                        "files": [{"name": "aevus-jaqueta.png", "type": "file"}],
+                    }
+                },
+            }
+        ]
+        nh._enrich_fitlab_seed_cover(client, "44444444-4444-4444-4444-444444444444")
+        self.assertEqual(client.uploads, [])
+
+    def test_cli_theme_missing_custom_cover_returns_error(self) -> None:
+        fake_env = {"NOTION_API_KEY": "ntn_fake", "NOTION_ROOT_PAGE_ID": "8a89378c-be6b-83f3-bc24-81a553d09ed0"}
+        with mock.patch.object(nh, "load_env", return_value=fake_env), mock.patch.object(
+            nh, "NotionClient", return_value=FakeNotionClient()
+        ), mock.patch("sys.stderr", new_callable=nh.io.StringIO) as err:
+            rc = nh.main(["theme", "--cover", "/caminho/que/nao/existe/cover.png"])
+            self.assertEqual(rc, 1)
+            self.assertIn("Imagem de capa não encontrada", err.getvalue())
 
 
 if __name__ == "__main__":

@@ -7,6 +7,25 @@ Mantido separado do [GEMINI.md](./GEMINI.md) para respeitar o limite de `24.000`
 
 ---
 
+## [2026-11-19] — Identidade Visual Emorphosis no Notion (`notion_hub.py theme` + Assets Oficiais)
+**Responsável:** Filipe (+ Antigravity)
+**Arquivos principais:** `docs/notion_assets/notion-cover.png`, `docs/notion_assets/notion-icon.png`, `scripts/notion_hub.py`, `scripts/test_notion_hub.py`, `docs/NOTION_HUB_SETUP.md`, `.agents/skills/emorphosis-notion-hub/SKILL.md`
+
+### O que mudou
+- Criados os assets visuais oficiais do hub em `docs/notion_assets/` (excluídos do deploy FTP da Hostinger via `EXCLUDE_NAMES`):
+  - `notion-cover.png` (`1500×540`): banner cyber preto/verde neon `#19f028` com silhueta radar do Brasil e tipografia terminal `EMR PHS // DEV HUB`.
+  - `notion-icon.png` (`512×512`): ícone pasta+losango em verde neon sobre `#020502`.
+- Implementado o comando idempotente `python scripts/notion_hub.py theme` (`--page-id`, `--cover`, `--icon`, `--skip-layout`) e integrado o mesmo tema ao `bootstrap`:
+  - Sobe capa e ícone para a página raiz via Notion File Upload API e aplica ícones verdes nos dois bancos (`Idea & Media Vault` e `Dev Task Tracker`).
+  - Organiza o layout HUD terminal (`EMORPHOSIS // DEV HUB`, colunas `00 // TERMINAL_NAV` com links do site + `00 // ATALHOS_CLI`, headings verdes `01 //`, `02 //` e toggle `03 // TERMINAL CHEATSHEET & VISUAL`) preservando os bancos de dados e quaisquer notas/dividers customizados da página.
+  - Vincula automaticamente `assets/img/fitlab/aevus-jaqueta.png` ao card semente do Fit Lab caso esteja sem capa no Moodboard.
+- Ampliados os testes offline em `scripts/test_notion_hub.py` (`15` testes cobrindo idempotência do `theme`, fallback sem colunas, `--skip-layout` e preservação de blocos customizados).
+
+### Contexto / Porquê
+- Aproximar a experiência visual do Notion Dev Hub da estética `#020502` / `#19f028` do site `emorphosis.com.br` sem depender de CSS customizado (não suportado nativamente pelo Notion) e sem risco de perda de dados em hubs já provisionados.
+
+---
+
 ## [2026-11-19] — Emorphosis Notion Dev Hub (Tarefas + Cofre de Ideias Multimídia + Antigravity)
 **Responsável:** Filipe (+ Antigravity)
 **Arquivos principais:** `scripts/notion_hub.py`, `scripts/test_notion_hub.py`, `docs/NOTION_HUB_SETUP.md`, `.agents/skills/emorphosis-notion-hub/SKILL.md`, `.env.example`, `scripts/deploy_ftp.py`, `README.md`, `GEMINI.md`

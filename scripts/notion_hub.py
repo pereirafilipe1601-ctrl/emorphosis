@@ -8,6 +8,7 @@ e multi-part em streaming de 10 MiB para áudios/vídeos pesados de até 5 GiB n
 Comandos principais:
   python scripts/notion_hub.py doctor
   python scripts/notion_hub.py bootstrap --page-id "<URL_OU_ID_DA_PAGINA_RAIZ>"
+  python scripts/notion_hub.py theme [--skip-layout] [--cover path] [--icon path]
   python scripts/notion_hub.py tasks list [--status ...] [--owner ...] [--area ...]
   python scripts/notion_hub.py tasks add --title "..." [--priority Alta] [--owner Filipe]
   python scripts/notion_hub.py tasks update <PAGE_ID> --status "Em Andamento"
@@ -40,6 +41,10 @@ from typing import Any
 ROOT = Path(__file__).resolve().parent.parent
 ENV_PATH = ROOT / ".env"
 DEVLOG_PATH = ROOT / "DEVLOG.md"
+NOTION_ASSETS_DIR = ROOT / "docs" / "notion_assets"
+NOTION_THEME_COVER_PATH = NOTION_ASSETS_DIR / "notion-cover.png"
+NOTION_THEME_ICON_PATH = NOTION_ASSETS_DIR / "notion-icon.png"
+FITLAB_SAMPLE_COVER_PATH = ROOT / "assets" / "img" / "fitlab" / "aevus-jaqueta.png"
 
 NOTION_API_BASE = "https://api.notion.com/v1"
 NOTION_VERSION = "2026-03-11"
@@ -379,14 +384,42 @@ class NotionClient:
     def update_page(self, page_id: str, payload: dict[str, Any]) -> dict[str, Any]:
         return self.request_json("PATCH", f"/pages/{page_id}", payload)
 
-    def append_block_children(self, block_id: str, children: list[dict[str, Any]]) -> dict[str, Any]:
-        return self.request_json("PATCH", f"/blocks/{block_id}/children", {"children": children})
+    def append_block_children(
+        self,
+        block_id: str,
+        children: list[dict[str, Any]],
+        position: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        payload: dict[str, Any] = {"children": children}
+        if position is not None:
+            payload["position"] = position
+        return self.request_json("PATCH", f"/blocks/{block_id}/children", payload)
+
+    def list_block_children(self, block_id: str, page_size: int = 100) -> list[dict[str, Any]]:
+        results: list[dict[str, Any]] = []
+        cursor: str | None = None
+        while True:
+            qs = f"?page_size={min(page_size, 100)}"
+            if cursor:
+                qs += f"&start_cursor={urllib.parse.quote(cursor)}"
+            resp = self.request_json("GET", f"/blocks/{block_id}/children{qs}")
+            results.extend(resp.get("results", []))
+            if not resp.get("has_more") or not resp.get("next_cursor"):
+                break
+            cursor = resp["next_cursor"]
+        return results
+
+    def delete_block(self, block_id: str) -> dict[str, Any]:
+        return self.request_json("DELETE", f"/blocks/{block_id}")
 
     def create_database(self, payload: dict[str, Any]) -> dict[str, Any]:
         return self.request_json("POST", "/databases", payload)
 
     def get_database(self, database_id: str) -> dict[str, Any]:
         return self.request_json("GET", f"/databases/{database_id}")
+
+    def update_database(self, database_id: str, payload: dict[str, Any]) -> dict[str, Any]:
+        return self.request_json("PATCH", f"/databases/{database_id}", payload)
 
     def get_data_source(self, data_source_id: str) -> dict[str, Any]:
         return self.request_json("GET", f"/data_sources/{data_source_id}")
@@ -691,6 +724,503 @@ def cmd_doctor(client: NotionClient, env: dict[str, str]) -> int:
     return 0
 
 
+def _rt(
+    content: str,
+    *,
+    bold: bool = False,
+    italic: bool = False,
+    code: bool = False,
+    color: str = "default",
+    link: str | None = None,
+) -> dict[str, Any]:
+    text_obj: dict[str, Any] = {"content": content}
+    if link:
+        text_obj["link"] = {"url": link}
+    annotations: dict[str, Any] = {}
+    if bold:
+        annotations["bold"] = True
+    if italic:
+        annotations["italic"] = True
+    if code:
+        annotations["code"] = True
+    if color and color != "default":
+        annotations["color"] = color
+    out: dict[str, Any] = {"type": "text", "text": text_obj}
+    if annotations:
+        out["annotations"] = annotations
+    return out
+
+
+def _build_hud_banner_block() -> dict[str, Any]:
+    return {
+        "object": "block",
+        "type": "callout",
+        "callout": {
+            "icon": {"type": "emoji", "emoji": "⚡"},
+            "color": "green_background",
+            "rich_text": [
+                _rt("EMORPHOSIS // DEV HUB", bold=True, code=True, color="green"),
+                _rt("   STATUS: ", bold=True, color="gray"),
+                _rt("ONLINE", bold=True, code=True, color="green"),
+                _rt("   |   131 MARCAS  ·  10 UFs  ·  PT / EN\n", color="gray"),
+                _rt(
+                    "Ecossistema da Moda Independente Brasileira — Backlog de Engenharia "
+                    "& Cofre Multimídia (Áudios, Vídeos, Fotos & Referências)."
+                ),
+            ],
+        },
+    }
+
+
+def _build_nav_card_block() -> dict[str, Any]:
+    return {
+        "object": "block",
+        "type": "callout",
+        "callout": {
+            "icon": {"type": "emoji", "emoji": "🌐"},
+            "color": "gray_background",
+            "rich_text": [
+                _rt("00 // TERMINAL_NAV\n", bold=True, code=True, color="green"),
+                _rt("H0M3", bold=True, code=True, color="green", link="https://emorphosis.com.br"),
+                _rt("  ·  ", color="gray"),
+                _rt("M4RCAS", bold=True, code=True, color="green", link="https://emorphosis.com.br/m4rcas"),
+                _rt("  ·  ", color="gray"),
+                _rt("C4L3NDAR10", bold=True, code=True, color="green", link="https://emorphosis.com.br/c4l3ndar10"),
+                _rt("\n"),
+                _rt("S0BR3", bold=True, code=True, color="green", link="https://emorphosis.com.br/s0br3"),
+                _rt("  ·  ", color="gray"),
+                _rt("SONHOS", bold=True, code=True, color="green", link="https://emorphosis.com.br/sonhos/"),
+                _rt("  ·  ", color="gray"),
+                _rt(
+                    "GITHUB",
+                    bold=True,
+                    code=True,
+                    color="green",
+                    link="https://github.com/pereirafilipe1601-ctrl/emorphosis",
+                ),
+            ],
+        },
+    }
+
+
+def _build_cli_card_block() -> dict[str, Any]:
+    return {
+        "object": "block",
+        "type": "callout",
+        "callout": {
+            "icon": {"type": "emoji", "emoji": "📟"},
+            "color": "gray_background",
+            "rich_text": [
+                _rt("00 // ATALHOS_CLI\n", bold=True, code=True, color="green"),
+                _rt("Ideia + mídia: ", color="gray"),
+                _rt("notion_hub.py ideas add --file ...", code=True, color="green"),
+                _rt("\nPromover card: ", color="gray"),
+                _rt("notion_hub.py ideas promote <ID>", code=True, color="green"),
+                _rt("\nSync DEVLOG:   ", color="gray"),
+                _rt("notion_hub.py devlog sync --apply", code=True, color="green"),
+            ],
+        },
+    }
+
+
+def _build_nav_columns_block() -> dict[str, Any]:
+    return {
+        "object": "block",
+        "type": "column_list",
+        "column_list": {
+            "children": [
+                {"object": "block", "type": "column", "column": {"children": [_build_nav_card_block()]}},
+                {"object": "block", "type": "column", "column": {"children": [_build_cli_card_block()]}},
+            ]
+        },
+    }
+
+
+def _build_ideas_heading_block() -> dict[str, Any]:
+    return {
+        "object": "block",
+        "type": "heading_2",
+        "heading_2": {
+            "color": "green",
+            "rich_text": [
+                _rt("01 // IDEA & MEDIA VAULT", bold=True, code=True, color="green"),
+                _rt("   —   MOODBOARD, ÁUDIOS, VÍDEOS & REFS", color="gray"),
+            ],
+        },
+    }
+
+
+def _build_tasks_heading_block() -> dict[str, Any]:
+    return {
+        "object": "block",
+        "type": "heading_2",
+        "heading_2": {
+            "color": "green",
+            "rich_text": [
+                _rt("02 // DEV TASK TRACKER", bold=True, code=True, color="green"),
+                _rt("   —   KANBAN, PRIORIDADES & SYNC DEVLOG", color="gray"),
+            ],
+        },
+    }
+
+
+def _build_footer_cheatsheet_blocks() -> list[dict[str, Any]]:
+    cheatsheet = (
+        "# EMORPHOSIS // DEV HUB — Comandos Rápidos\n"
+        "python scripts/notion_hub.py doctor\n"
+        "python scripts/notion_hub.py tasks list\n"
+        "python scripts/notion_hub.py ideas add --title \"...\" --pillar \"Fit Lab\" "
+        "--file audio.m4a --file foto.png --link \"https://...\"\n"
+        "python scripts/notion_hub.py ideas promote <IDEA_ID> --owner Filipe --priority Alta\n"
+        "python scripts/notion_hub.py devlog sync --apply\n"
+        "python scripts/notion_hub.py theme"
+    )
+    return [
+        {"object": "block", "type": "divider", "divider": {}},
+        {
+            "object": "block",
+            "type": "toggle",
+            "toggle": {
+                "color": "gray",
+                "rich_text": [
+                    _rt("03 // TERMINAL CHEATSHEET & VISUAL", bold=True, code=True, color="green"),
+                    _rt("   —   comandos rápidos e guia Dark Mode", color="gray"),
+                ],
+                "children": [
+                    {
+                        "object": "block",
+                        "type": "paragraph",
+                        "paragraph": {
+                            "rich_text": [
+                                _rt("Dica visual do site: ative o Dark Mode no Notion (", color="gray"),
+                                _rt("Ctrl + Shift + L", code=True, color="green"),
+                                _rt(" no Windows ou ", color="gray"),
+                                _rt("Cmd + Shift + L", code=True, color="green"),
+                                _rt(" no Mac) e marque ", color="gray"),
+                                _rt("••• → Full width", code=True, color="green"),
+                                _rt(" para destacar a paleta #020502 + #19f028.", color="gray"),
+                            ]
+                        },
+                    },
+                    {
+                        "object": "block",
+                        "type": "code",
+                        "code": {
+                            "language": "bash",
+                            "rich_text": split_rich_text(cheatsheet),
+                        },
+                    },
+                ],
+            },
+        },
+    ]
+
+
+def _append_top_hud(
+    client: NotionClient,
+    root_page_id: str,
+    *,
+    position: dict[str, Any] | None = None,
+    section_heading: dict[str, Any] | None = None,
+) -> None:
+    heading_block = section_heading or _build_ideas_heading_block()
+    top_blocks = [
+        _build_hud_banner_block(),
+        _build_nav_columns_block(),
+        {"object": "block", "type": "divider", "divider": {}},
+        heading_block,
+    ]
+    try:
+        client.append_block_children(root_page_id, top_blocks, position=position)
+    except NotionAPIError:
+        fallback_blocks = [
+            _build_hud_banner_block(),
+            _build_nav_card_block(),
+            _build_cli_card_block(),
+            {"object": "block", "type": "divider", "divider": {}},
+            heading_block,
+        ]
+        client.append_block_children(root_page_id, fallback_blocks, position=position)
+
+
+def _set_db_green_icon(client: NotionClient, db_id: str, icon_candidates: tuple[str, ...], fallback_emoji: str) -> None:
+    for icon_name in icon_candidates:
+        try:
+            client.update_database(
+                db_id,
+                {"icon": {"type": "icon", "icon": {"name": icon_name, "color": "green"}}},
+            )
+            return
+        except NotionAPIError:
+            continue
+    try:
+        client.update_database(db_id, {"icon": {"type": "emoji", "emoji": fallback_emoji}})
+    except NotionAPIError:
+        pass
+
+
+def _apply_page_and_db_branding(
+    client: NotionClient,
+    root_page_id: str,
+    *,
+    ideas_db_id: str | None = None,
+    tasks_db_id: str | None = None,
+    cover_path: Path | None = NOTION_THEME_COVER_PATH,
+    icon_path: Path | None = NOTION_THEME_ICON_PATH,
+) -> None:
+    page_patch: dict[str, Any] = {}
+    if cover_path and cover_path.exists():
+        cover_up = client.upload_file(cover_path)
+        page_patch["cover"] = {"type": "file_upload", "file_upload": {"id": cover_up["id"]}}
+        print(f"  [OK] Capa Emorphosis enviada ({cover_path.name})")
+    if icon_path and icon_path.exists():
+        icon_up = client.upload_file(icon_path)
+        page_patch["icon"] = {"type": "file_upload", "file_upload": {"id": icon_up["id"]}}
+        print(f"  [OK] Ícone Matrix neon enviado ({icon_path.name})")
+
+    if page_patch:
+        client.update_page(root_page_id, page_patch)
+
+    if ideas_db_id:
+        _set_db_green_icon(client, ideas_db_id, ("lightbulb", "bulb", "light-bulb", "bolt"), "💡")
+    if tasks_db_id:
+        _set_db_green_icon(client, tasks_db_id, ("checklist", "check-circle", "list-check"), "📋")
+
+
+def _block_plain_text(block: dict[str, Any]) -> str:
+    btype = block.get("type", "")
+    data = block.get(btype) or {}
+    rich = data.get("rich_text")
+    if isinstance(rich, list):
+        return "".join(span.get("plain_text", "") or (span.get("text") or {}).get("content", "") for span in rich)
+    return ""
+
+
+def _is_hub_chrome_block(client: NotionClient, block: dict[str, Any]) -> bool:
+    btype = block.get("type", "")
+    if btype in ("child_database", "child_page"):
+        return False
+
+    txt = _block_plain_text(block)
+    chrome_markers = (
+        "EMORPHOSIS // DEV HUB",
+        "TERMINAL_NAV",
+        "ATALHOS_CLI",
+        "Idea & Media Vault",
+        "IDEA & MEDIA VAULT",
+        "Dev Task Tracker",
+        "DEV TASK TRACKER",
+        "TERMINAL CHEATSHEET",
+    )
+    if btype in ("callout", "heading_1", "heading_2", "heading_3", "toggle") and any(m in txt for m in chrome_markers):
+        return True
+
+    if btype == "column_list" and block.get("has_children"):
+        try:
+            cols = client.list_block_children(block["id"])
+            for col in cols:
+                if col.get("has_children"):
+                    col_children = client.list_block_children(col["id"])
+                    for child in col_children:
+                        child_txt = _block_plain_text(child)
+                        if "TERMINAL_NAV" in child_txt or "ATALHOS_CLI" in child_txt:
+                            return True
+        except NotionAPIError:
+            return False
+
+    return False
+
+
+def _cleanup_old_hub_chrome(
+    client: NotionClient,
+    children: list[dict[str, Any]],
+    hub_db_ids: set[str] | None = None,
+) -> None:
+    to_delete = [False] * len(children)
+    for idx, blk in enumerate(children):
+        if _is_hub_chrome_block(client, blk):
+            to_delete[idx] = True
+
+    hub_ids = hub_db_ids or set()
+    # Remove apenas dividers ligados ao chrome gerado (nunca apaga dividers de notas customizadas)
+    for idx, blk in enumerate(children):
+        if blk.get("type") != "divider":
+            continue
+        prev_chrome = idx > 0 and to_delete[idx - 1]
+        next_chrome = idx + 1 < len(children) and to_delete[idx + 1]
+        between_hub_dbs = (
+            0 < idx < len(children) - 1
+            and children[idx - 1].get("id") in hub_ids
+            and children[idx + 1].get("id") in hub_ids
+        )
+        if prev_chrome or next_chrome or between_hub_dbs:
+            to_delete[idx] = True
+
+    for idx, flag in enumerate(to_delete):
+        if flag:
+            try:
+                client.delete_block(children[idx]["id"])
+            except NotionAPIError:
+                pass
+
+
+def _find_hub_db_blocks(
+    children: list[dict[str, Any]],
+    ideas_db_id: str | None = None,
+    tasks_db_id: str | None = None,
+) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
+    norm_ideas = extract_notion_id(ideas_db_id) if ideas_db_id else ""
+    norm_tasks = extract_notion_id(tasks_db_id) if tasks_db_id else ""
+    ideas_blk: dict[str, Any] | None = None
+    tasks_blk: dict[str, Any] | None = None
+
+    for blk in children:
+        if blk.get("type") != "child_database":
+            continue
+        bid = blk.get("id", "")
+        title = ((blk.get("child_database") or {}).get("title") or "").lower()
+        if (norm_ideas and bid == norm_ideas) or ("idea" in title or "vault" in title):
+            ideas_blk = blk
+        elif (norm_tasks and bid == norm_tasks) or ("task" in title or "tracker" in title):
+            tasks_blk = blk
+    return ideas_blk, tasks_blk
+
+
+def _enrich_fitlab_seed_cover(client: NotionClient, ideas_ds_id: str) -> None:
+    if not FITLAB_SAMPLE_COVER_PATH.exists():
+        return
+    try:
+        rows = client.query_data_source(
+            ideas_ds_id,
+            filter_obj={"property": "Ideia", "title": {"contains": "Fit Lab"}},
+            page_size=5,
+        )
+        for row in rows:
+            props = row.get("properties") or {}
+            files = (props.get("Anexos / Capa") or {}).get("files", [])
+            if not files and not row.get("cover"):
+                attach_to_idea(
+                    client,
+                    page_id=row["id"],
+                    files=[FITLAB_SAMPLE_COVER_PATH],
+                    notes="Preview automático de recorte Fit Lab (Atelier Aevus) para o Moodboard.",
+                )
+                print(f"  [OK] Capa de preview ({FITLAB_SAMPLE_COVER_PATH.name}) vinculada à ideia Fit Lab")
+                break
+    except Exception:
+        pass
+
+
+def cmd_theme(
+    client: NotionClient,
+    env: dict[str, str],
+    *,
+    page_id_raw: str | None = None,
+    cover_path: Path | None = NOTION_THEME_COVER_PATH,
+    icon_path: Path | None = NOTION_THEME_ICON_PATH,
+    include_layout: bool = True,
+) -> None:
+    raw_root = (page_id_raw or env.get("NOTION_ROOT_PAGE_ID", "")).strip()
+    if not raw_root:
+        raise ValueError(
+            "NOTION_ROOT_PAGE_ID não configurado. Passe --page-id <URL_OU_ID> ou rode `bootstrap` primeiro."
+        )
+    root_page_id = extract_notion_id(raw_root)
+
+    ideas_db_id = extract_notion_id(env["NOTION_IDEAS_DB_ID"]) if env.get("NOTION_IDEAS_DB_ID", "").strip() else None
+    tasks_db_id = extract_notion_id(env["NOTION_TASKS_DB_ID"]) if env.get("NOTION_TASKS_DB_ID", "").strip() else None
+    ideas_ds_id = extract_notion_id(env["NOTION_IDEAS_DS_ID"]) if env.get("NOTION_IDEAS_DS_ID", "").strip() else None
+
+    print(f"1/3 Aplicando identidade visual Emorphosis na página ({root_page_id})...")
+    client.get_page(root_page_id)
+
+    children: list[dict[str, Any]] = []
+    if include_layout or not ideas_db_id or not tasks_db_id:
+        children = client.list_block_children(root_page_id)
+        found_ideas, found_tasks = _find_hub_db_blocks(children, ideas_db_id, tasks_db_id)
+        if not ideas_db_id and found_ideas:
+            ideas_db_id = found_ideas["id"]
+        if not tasks_db_id and found_tasks:
+            tasks_db_id = found_tasks["id"]
+
+    _apply_page_and_db_branding(
+        client,
+        root_page_id,
+        ideas_db_id=ideas_db_id,
+        tasks_db_id=tasks_db_id,
+        cover_path=cover_path,
+        icon_path=icon_path,
+    )
+
+    if include_layout:
+        print("2/3 Atualizando blocos HUD e cabeçalhos verdes sem tocar nos bancos...")
+        ideas_blk, tasks_blk = _find_hub_db_blocks(children, ideas_db_id, tasks_db_id)
+        hub_db_ids = {b["id"] for b in (ideas_blk, tasks_blk) if b and b.get("id")}
+        _cleanup_old_hub_chrome(client, children, hub_db_ids=hub_db_ids)
+
+        ordered_dbs = [
+            (blk, idx)
+            for idx, blk in enumerate(children)
+            if blk in (ideas_blk, tasks_blk)
+        ]
+        if len(ordered_dbs) == 2 and ordered_dbs[0][0] is tasks_blk:
+            # Caso o usuário tenha invertido a ordem dos dois bancos no Notion
+            _append_top_hud(
+                client,
+                root_page_id,
+                position={"type": "start"},
+                section_heading=_build_tasks_heading_block(),
+            )
+            if tasks_blk:
+                client.append_block_children(
+                    root_page_id,
+                    [{"object": "block", "type": "divider", "divider": {}}, _build_ideas_heading_block()],
+                    position={"type": "after_block", "after_block": {"id": tasks_blk["id"]}},
+                )
+            if ideas_blk:
+                client.append_block_children(
+                    root_page_id,
+                    _build_footer_cheatsheet_blocks(),
+                    position={"type": "after_block", "after_block": {"id": ideas_blk["id"]}},
+                )
+        elif ideas_blk:
+            _append_top_hud(client, root_page_id, position={"type": "start"})
+            client.append_block_children(
+                root_page_id,
+                [{"object": "block", "type": "divider", "divider": {}}, _build_tasks_heading_block()],
+                position={"type": "after_block", "after_block": {"id": ideas_blk["id"]}},
+            )
+            if tasks_blk:
+                client.append_block_children(
+                    root_page_id,
+                    _build_footer_cheatsheet_blocks(),
+                    position={"type": "after_block", "after_block": {"id": tasks_blk["id"]}},
+                )
+        elif tasks_blk:
+            _append_top_hud(
+                client,
+                root_page_id,
+                position={"type": "start"},
+                section_heading=_build_tasks_heading_block(),
+            )
+            client.append_block_children(
+                root_page_id,
+                _build_footer_cheatsheet_blocks(),
+                position={"type": "after_block", "after_block": {"id": tasks_blk["id"]}},
+            )
+        else:
+            _append_top_hud(client, root_page_id)
+            client.append_block_children(root_page_id, _build_footer_cheatsheet_blocks())
+        print("  [OK] Layout HUD terminal aplicado com preservação dos dados.")
+    else:
+        print("2/3 Layout de blocos preservado (--skip-layout).")
+
+    print("3/3 Verificando preview visual do Moodboard Fit Lab...")
+    if ideas_ds_id:
+        _enrich_fitlab_seed_cover(client, ideas_ds_id)
+    print("\n[OK] Identidade visual Emorphosis aplicada! No Notion, use Dark Mode (Ctrl+Shift+L / Cmd+Shift+L) + Full width.")
+
+
 def cmd_bootstrap(
     client: NotionClient,
     page_id_raw: str,
@@ -699,33 +1229,11 @@ def cmd_bootstrap(
     env_path: Path = ENV_PATH,
 ) -> dict[str, str]:
     root_page_id = extract_notion_id(page_id_raw)
-    print(f"1/5 Verificando acesso à página raiz ({root_page_id})...")
+    print(f"1/5 Verificando acesso e aplicando tema visual Emorphosis ({root_page_id})...")
     client.get_page(root_page_id)
 
-    # Cabeçalho visual no topo do Hub
-    client.append_block_children(
-        root_page_id,
-        [
-            {
-                "object": "block",
-                "type": "callout",
-                "callout": {
-                    "icon": {"type": "emoji", "emoji": "⚡"},
-                    "color": "green_background",
-                    "rich_text": split_rich_text(
-                        "EMORPHOSIS // DEV HUB — Central de tarefas da equipe e cofre multimídia "
-                        "(áudios, vídeos, fotos e links). Integrado ao Google Antigravity via Notion MCP "
-                        "e scripts/notion_hub.py."
-                    ),
-                },
-            },
-            {
-                "object": "block",
-                "type": "heading_2",
-                "heading_2": {"rich_text": split_rich_text("💡 Idea & Media Vault (Moodboard & Referências)")},
-            },
-        ],
-    )
+    _apply_page_and_db_branding(client, root_page_id)
+    _append_top_hud(client, root_page_id)
 
     print("2/5 Criando banco '💡 Idea & Media Vault'...")
     ideas_db = client.create_database(
@@ -739,17 +1247,14 @@ def cmd_bootstrap(
     )
     ideas_db_id = ideas_db["id"]
     ideas_ds_id = ideas_db["data_sources"][0]["id"]
+    _set_db_green_icon(client, ideas_db_id, ("lightbulb", "bulb", "light-bulb", "bolt"), "💡")
     print(f"  [OK] Idea Vault DB={ideas_db_id} | DS={ideas_ds_id}")
 
     client.append_block_children(
         root_page_id,
         [
             {"object": "block", "type": "divider", "divider": {}},
-            {
-                "object": "block",
-                "type": "heading_2",
-                "heading_2": {"rich_text": split_rich_text("📋 Dev Task Tracker (Controle de Tarefas)")},
-            },
+            _build_tasks_heading_block(),
         ],
     )
 
@@ -790,7 +1295,10 @@ def cmd_bootstrap(
 
     tasks_db_id = tasks_db["id"]
     tasks_ds_id = tasks_db["data_sources"][0]["id"]
+    _set_db_green_icon(client, tasks_db_id, ("checklist", "check-circle", "list-check"), "📋")
     print(f"  [OK] Task Tracker DB={tasks_db_id} | DS={tasks_ds_id}")
+
+    client.append_block_children(root_page_id, _build_footer_cheatsheet_blocks())
 
     # Renomeia a propriedade de volta (back-relation) no Idea Vault para "Tarefas Geradas"
     tasks_ds_schema = client.get_data_source(tasks_ds_id)
@@ -936,6 +1444,7 @@ def cmd_bootstrap(
     # Seed inicial com as pendências reais documentadas no GEMINI.md
     if seed:
         print("5/5 Populando backlog inicial do Emorphosis (pendências do GEMINI.md)...")
+        seed_files = [FITLAB_SAMPLE_COVER_PATH] if FITLAB_SAMPLE_COVER_PATH.exists() else None
         fitlab_idea = create_idea(
             client=client,
             ideas_ds_id=ideas_ds_id,
@@ -949,6 +1458,7 @@ def cmd_bootstrap(
                 "(Atelier Aevus jaqueta/calça e Drestudio boné). Reunir fotos/vídeos de peças "
                 "icônicas de outras marcas do catálogo de 131 marcas para recortar em PNG."
             ),
+            files=seed_files,
         )
         seed_tasks = [
             {
@@ -1543,6 +2053,16 @@ def build_parser() -> argparse.ArgumentParser:
     p_boot.add_argument("--no-seed", action="store_true", help="Não criar tarefas/ideia iniciais")
     p_boot.add_argument("--no-save-env", action="store_true", help="Não gravar os IDs no .env")
 
+    # theme
+    p_theme = sub.add_parser(
+        "theme",
+        help="Aplica capa/ícone Emorphosis e layout HUD verde terminal na página raiz sem apagar dados",
+    )
+    p_theme.add_argument("--page-id", help="URL ou ID da página raiz (padrão: NOTION_ROOT_PAGE_ID do .env)")
+    p_theme.add_argument("--cover", help="Caminho para imagem de capa customizada (padrão: docs/notion_assets/notion-cover.png)")
+    p_theme.add_argument("--icon", help="Caminho para imagem de ícone customizada (padrão: docs/notion_assets/notion-icon.png)")
+    p_theme.add_argument("--skip-layout", action="store_true", help="Atualiza apenas capa/ícones sem mexer nos blocos HUD")
+
     # tasks
     p_tasks = sub.add_parser("tasks", help="Gerenciar tarefas no Dev Task Tracker")
     t_sub = p_tasks.add_subparsers(dest="action", required=True)
@@ -1647,6 +2167,29 @@ def main(argv: list[str] | None = None) -> int:
             print("\n=== IDs Provisionados ===")
             for k, v in ids.items():
                 print(f"{k}={v}")
+            return 0
+
+        if args.command == "theme":
+            if args.cover:
+                cover_path = Path(args.cover).expanduser().resolve()
+                if not cover_path.exists():
+                    raise FileNotFoundError(f"Imagem de capa não encontrada: {cover_path}")
+            else:
+                cover_path = NOTION_THEME_COVER_PATH
+            if args.icon:
+                icon_path = Path(args.icon).expanduser().resolve()
+                if not icon_path.exists():
+                    raise FileNotFoundError(f"Imagem de ícone não encontrada: {icon_path}")
+            else:
+                icon_path = NOTION_THEME_ICON_PATH
+            cmd_theme(
+                client=client,
+                env=env,
+                page_id_raw=args.page_id,
+                cover_path=cover_path,
+                icon_path=icon_path,
+                include_layout=not args.skip_layout,
+            )
             return 0
 
         if args.command == "tasks":

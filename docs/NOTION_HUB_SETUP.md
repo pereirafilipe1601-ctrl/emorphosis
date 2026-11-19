@@ -66,17 +66,23 @@ Este guia configura do zero o **EMORPHOSIS // DEV HUB** no Notion (controle de t
    ```
 
 O que o comando `bootstrap` cria sozinho em ~10 segundos:
-- Banner superior no `EMORPHOSIS // DEV HUB`.
+- Identidade visual **Emorphosis**: capa oficial (`docs/notion_assets/notion-cover.png`), ícone Matrix neon (`docs/notion_assets/notion-icon.png`), banner HUD superior, cards de navegação (`00 // TERMINAL_NAV` & `ATALHOS_CLI`) e headings verdes.
 - Banco **`💡 Idea & Media Vault`** com propriedades (`Ideia`, `Status`, `Formatos`, `Pilar`, `Autor`, `Link Principal`, `Mídia / Drive`, `Anexos / Capa`, `Criado em`).
 - Banco **`📋 Dev Task Tracker`** com propriedades (`Tarefa`, `Status` [Backlog → A Fazer → Em Andamento → Em Revisão → Concluído], `Prioridade`, `Responsável`, `Área`, `Tipo`, `Prazo`, `Branch / PR`, `Registrado no DEVLOG`).
 - **Relação bidirecional** automática: **`Ideia Origem` ⇄ `Tarefas Geradas`**.
 - **6 Views prontas**:
   - No *Task Tracker*: `📋 Kanban (Status)`, `🔥 Prioridades Ativas`, `✅ Concluídas (DEVLOG)`.
   - No *Idea Vault*: `🎨 Moodboard (Galeria com capa)`, `📥 Inbox de Captura`, `🚀 Pipeline de Ideias`.
-- **Backlog inicial** já populado com as 3 pendências reais do [`GEMINI.md`](../GEMINI.md) + 1 ideia vinculada ao Fit Lab.
+- **Backlog inicial** já populado com as 3 pendências reais do [`GEMINI.md`](../GEMINI.md) + 1 ideia vinculada ao Fit Lab (com preview `aevus-jaqueta.png`).
 - **Gravação automática** dos IDs (`NOTION_ROOT_PAGE_ID`, `NOTION_TASKS_DB_ID`, `NOTION_TASKS_DS_ID`, `NOTION_IDEAS_DB_ID`, `NOTION_IDEAS_DS_ID`) no seu `.env`.
 
-5. Rode o diagnóstico novamente para confirmar tudo verde:
+5. Para aplicar ou reaplicar **somente o visual Emorphosis** em um hub já existente (sem tocar nos bancos/cards):
+   ```bash
+   python scripts/notion_hub.py theme
+   ```
+   *(No Notion, ative o **Dark Mode** com `Ctrl + Shift + L` / `Cmd + Shift + L` e ligue **`••• → Full width`** para completar a paleta `#020502` + `#19f028`.)*
+
+6. Rode o diagnóstico novamente para confirmar tudo verde:
    ```bash
    python scripts/notion_hub.py doctor
    ```
@@ -162,4 +168,7 @@ python scripts/notion_hub.py ideas promote <IDEA_ID_OU_URL> \
 # Gerar prévia e depois aplicar no DEVLOG.md as tarefas concluídas
 python scripts/notion_hub.py devlog sync
 python scripts/notion_hub.py devlog sync --apply --author "Filipe (+ Antigravity)"
+
+# Aplicar/atualizar identidade visual (capa, ícone neon, HUD verde e preview Fit Lab)
+python scripts/notion_hub.py theme
 ```
