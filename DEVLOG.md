@@ -16,7 +16,7 @@ Mantido separado do [GEMINI.md](./GEMINI.md) para respeitar o limite de `24.000`
 - Adicionadas **10 novas marcas** ao catálogo (131 → **141 marcas**, sendo **111** com média mapeada e **30** em `Drop / Sob Consulta`):
   - **Com preços auditados (8):** `Bobe Studios` (RS), `ByEller` (MG), `Fantasia Celeste` (São Paulo - SP), `Grama` (Curitiba - PR), `Martins` (São Paulo - SP), `Stacci` (Uberaba - MG), `Studio Lacerda` (São Paulo - SP) e `Unselfish Lover` (SP).
   - **Drop / Sob Consulta (2):** `Theybs` (Belo Horizonte - MG) e `Treco Studio` (RJ).
-- Convertidas e padronizadas as 10 logos em `.jpg` `1:1` em `assets/img/marcas/`, atualizados os contadores e cidades de `assets/data/brazil_states_shapes.json` (incluindo `Uberaba - MG`), ajustado `assets/js/main.js` para exibir limpo marcas cadastradas apenas com UF (sem cidade), sincronizados contadores PT/EN em `assets/js/i18n.js` / `s0br3.html` e incrementado `ASSET_VER` para `20261119a`.
+- Convertidas e padronizadas as 10 logos em `.jpg` `1:1` em `assets/img/marcas/` (incluindo versão invertida em alto contraste sobre fundo preto para `trecostudio.jpg`), atualizados os contadores e cidades de `assets/data/brazil_states_shapes.json` (incluindo `Uberaba - MG`), ajustado `assets/js/main.js` para exibir limpo marcas cadastradas apenas com UF (sem cidade), sincronizados contadores PT/EN em `assets/js/i18n.js` / `s0br3.html`, incrementado `ASSET_VER` para `20261119a` e validado em preview local (`M4RCAS`, `H0M3`, `marca.html`) antes do deploy em produção.
 
 ### Contexto / Porquê
 - Expandir a curadoria nacional do diretório `M4RCAS` e do mapa interativo `H0M3` mantendo a auditoria de preços, localização e compatibilidade visual/cache-busting do site.
