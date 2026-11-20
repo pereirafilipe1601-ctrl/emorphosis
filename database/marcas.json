@@ -486,6 +486,41 @@
     "state_y": 384.8
   },
   {
+    "slug": "bobestudios",
+    "name": "Bobe Studios",
+    "sort_key": "bobe studios",
+    "handle": "bobestudios",
+    "url": "https://www.instagram.com/bobestudios/",
+    "img": "assets/img/marcas/bobestudios.jpg",
+    "categories": [
+      "roupas",
+      "diversos"
+    ],
+    "vibes": [
+      "streetwear",
+      "graphic",
+      "contemporary"
+    ],
+    "price_found": true,
+    "min_price": 180.0,
+    "max_price": 250.0,
+    "avg_price": 215.0,
+    "min_item": "Camiseta Regular \"Basic White\"",
+    "max_item": "Bandeira \"BASIC ERA\"",
+    "store_url": "https://www.bobestudios.com.br",
+    "city": "",
+    "state": "RS",
+    "location": "RS",
+    "location_source": "Site oficial (produção no RS + telefone DDD 51) + RDAP bobestudios.com.br",
+    "location_confidence": "medium",
+    "lat": -29.75,
+    "lon": -53.2,
+    "map_x": 966.0,
+    "map_y": 1022.0,
+    "state_x": 641.5,
+    "state_y": 306.6
+  },
+  {
     "slug": "boffboy",
     "name": "Boffboy Chique",
     "sort_key": "boffboy",
@@ -707,6 +742,43 @@
     "map_y": 840.4,
     "state_x": 673.3,
     "state_y": 206.7
+  },
+  {
+    "slug": "byeller",
+    "name": "ByEller",
+    "sort_key": "byeller",
+    "handle": "ateliebyeller",
+    "url": "https://www.instagram.com/ateliebyeller/",
+    "img": "assets/img/marcas/byeller.jpg",
+    "categories": [
+      "roupas",
+      "acessorios",
+      "handmade",
+      "upcycling"
+    ],
+    "vibes": [
+      "artisanal",
+      "upcycling",
+      "streetwear"
+    ],
+    "price_found": true,
+    "min_price": 75.0,
+    "max_price": 330.0,
+    "avg_price": 202.5,
+    "min_item": "Bolsa Selly (jeans reaproveitado)",
+    "max_item": "Moletom street",
+    "store_url": "https://loja.menu/byeller",
+    "city": "",
+    "state": "MG",
+    "location": "MG",
+    "location_source": "Registros locais / Feira Spot MG (apenas estado confirmado)",
+    "location_confidence": "medium",
+    "lat": -18.5122,
+    "lon": -44.555,
+    "map_x": 1106.0,
+    "map_y": 808.0,
+    "state_x": 645.7,
+    "state_y": 315.1
   },
   {
     "slug": "carnan",
@@ -1662,6 +1734,43 @@
     "state_y": 293.8
   },
   {
+    "slug": "fantasiaceleste",
+    "name": "Fantasia Celeste",
+    "sort_key": "fantasia celeste",
+    "handle": "fantasiaceleste_",
+    "url": "https://www.instagram.com/fantasiaceleste_/",
+    "img": "assets/img/marcas/fantasiaceleste.jpg",
+    "categories": [
+      "roupas",
+      "handmade",
+      "acessorios",
+      "upcycling"
+    ],
+    "vibes": [
+      "artisanal",
+      "upcycling",
+      "experimental"
+    ],
+    "price_found": true,
+    "min_price": 102.6,
+    "max_price": 1597.9,
+    "avg_price": 850.25,
+    "min_item": "Colar Silver Heart",
+    "max_item": "Vestido Vale Dourado",
+    "store_url": "https://fantasiaceleste.com",
+    "city": "São Paulo",
+    "state": "SP",
+    "location": "São Paulo - SP",
+    "location_source": "Matéria Editora Abril / Capricho (Esthela Moraes — Cidade Tiradentes, São Paulo - SP)",
+    "location_confidence": "high",
+    "lat": -23.5505,
+    "lon": -46.6333,
+    "map_x": 1061.4,
+    "map_y": 882.2,
+    "state_x": 780.2,
+    "state_y": 414.5
+  },
+  {
     "slug": "fantasma",
     "name": "Fantasma",
     "sort_key": "fantasma",
@@ -1755,6 +1864,41 @@
     "map_y": 874.0,
     "state_x": 761.5,
     "state_y": 474.4
+  },
+  {
+    "slug": "grama",
+    "name": "Grama",
+    "sort_key": "grama",
+    "handle": "grama____",
+    "url": "https://www.instagram.com/grama____/",
+    "img": "assets/img/marcas/grama.jpg",
+    "categories": [
+      "roupas",
+      "acessorios"
+    ],
+    "vibes": [
+      "contemporary",
+      "minimal",
+      "tailoring"
+    ],
+    "price_found": true,
+    "min_price": 59.4,
+    "max_price": 1598.0,
+    "avg_price": 828.7,
+    "min_item": "Top Gabrielle Terracota",
+    "max_item": "Trench Coat Agnes Xadrez",
+    "store_url": "https://grama.me",
+    "city": "Curitiba",
+    "state": "PR",
+    "location": "Curitiba - PR",
+    "location_source": "Site oficial / CNPJ 38.779.075/0001-95 (Grama Confecções Ltda) + ParkShoppingBarigüi",
+    "location_confidence": "high",
+    "lat": -25.4284,
+    "lon": -49.2733,
+    "map_x": 1003.1,
+    "map_y": 926.5,
+    "state_x": 835.2,
+    "state_y": 418.4
   },
   {
     "slug": "gurte",
@@ -2469,6 +2613,44 @@
     "map_y": 862.2,
     "state_x": 710.9,
     "state_y": 297.8
+  },
+  {
+    "slug": "martins",
+    "name": "Martins",
+    "sort_key": "martins",
+    "handle": "martins__________",
+    "url": "https://www.instagram.com/martins__________/",
+    "img": "assets/img/marcas/martins.jpg",
+    "categories": [
+      "roupas",
+      "acessorios",
+      "alfaiataria",
+      "sob medida"
+    ],
+    "vibes": [
+      "avantgarde",
+      "tailoring",
+      "contemporary",
+      "experimental"
+    ],
+    "price_found": true,
+    "min_price": 280.0,
+    "max_price": 5890.0,
+    "avg_price": 3085.0,
+    "min_item": "Colar Escapulário / Fox Faux Fur Charm",
+    "max_item": "Bolsa Kôia",
+    "store_url": "https://www.martinssp.com/",
+    "city": "São Paulo",
+    "state": "SP",
+    "location": "São Paulo - SP",
+    "location_source": "Site oficial + CNPJ 62.243.913/0001-96 (Martins Tom Ltda) — Galeria Ouro Fino, Rua Augusta 2690, SP",
+    "location_confidence": "high",
+    "lat": -23.5505,
+    "lon": -46.6333,
+    "map_x": 1055.2,
+    "map_y": 877.1,
+    "state_x": 763.8,
+    "state_y": 408.2
   },
   {
     "slug": "melania",
@@ -3864,6 +4046,76 @@
     "state_y": 370.5
   },
   {
+    "slug": "stacci",
+    "name": "Stacci",
+    "sort_key": "stacci",
+    "handle": "usestacci",
+    "url": "https://www.instagram.com/usestacci/",
+    "img": "assets/img/marcas/stacci.jpg",
+    "categories": [
+      "roupas",
+      "acessorios"
+    ],
+    "vibes": [
+      "streetwear",
+      "graphic",
+      "contemporary"
+    ],
+    "price_found": true,
+    "min_price": 28.0,
+    "max_price": 540.0,
+    "avg_price": 284.0,
+    "min_item": "Faixas Polka Dots",
+    "max_item": "Vestido Tulipa Negra",
+    "store_url": "https://usestacci.com.br",
+    "city": "Uberaba",
+    "state": "MG",
+    "location": "Uberaba - MG",
+    "location_source": "RDAP usestacci.com.br + CNPJ 40.083.176/0001-79 (Thais de Castro Castanheira Stacciarini - ME)",
+    "location_confidence": "high",
+    "lat": -19.7472,
+    "lon": -47.9381,
+    "map_x": 1032.3,
+    "map_y": 808.6,
+    "state_x": 451.7,
+    "state_y": 402.3
+  },
+  {
+    "slug": "studiolacerda",
+    "name": "Studio Lacerda",
+    "sort_key": "studio lacerda",
+    "handle": "st.lacerda",
+    "url": "https://www.instagram.com/st.lacerda/",
+    "img": "assets/img/marcas/studiolacerda.jpg",
+    "categories": [
+      "roupas",
+      "acessorios"
+    ],
+    "vibes": [
+      "contemporary",
+      "minimal",
+      "graphic"
+    ],
+    "price_found": true,
+    "min_price": 396.0,
+    "max_price": 699.0,
+    "avg_price": 547.5,
+    "min_item": "Top Brasília",
+    "max_item": "Mãe Set",
+    "store_url": "https://studio-lacerda.com/pt-br",
+    "city": "São Paulo",
+    "state": "SP",
+    "location": "São Paulo - SP",
+    "location_source": "Site oficial (produção ética em São Paulo com algodão brasileiro)",
+    "location_confidence": "high",
+    "lat": -23.5505,
+    "lon": -46.6333,
+    "map_x": 1059.5,
+    "map_y": 885.8,
+    "state_x": 771.6,
+    "state_y": 419.0
+  },
+  {
     "slug": "estudioteia",
     "name": "Teia",
     "sort_key": "teia",
@@ -3895,6 +4147,77 @@
     "map_y": 968.0,
     "state_x": 917.2,
     "state_y": 313.3
+  },
+  {
+    "slug": "theybs",
+    "name": "Theybs",
+    "sort_key": "theybs",
+    "handle": "theybs_oficial",
+    "url": "https://www.instagram.com/theybs_oficial/",
+    "img": "assets/img/marcas/theybs.jpg",
+    "categories": [
+      "roupas",
+      "handmade",
+      "sob medida"
+    ],
+    "vibes": [
+      "streetwear",
+      "artisanal",
+      "experimental"
+    ],
+    "price_found": false,
+    "min_price": null,
+    "max_price": null,
+    "avg_price": null,
+    "min_item": "",
+    "max_item": "",
+    "store_url": null,
+    "city": "Belo Horizonte",
+    "state": "MG",
+    "location": "Belo Horizonte - MG",
+    "location_source": "Matérias Brasil de Fato / Nossas (Gabriella Stephanie, estilista/figurinista em BH)",
+    "location_confidence": "high",
+    "lat": -19.9167,
+    "lon": -43.9345,
+    "map_x": 1118.2,
+    "map_y": 815.4,
+    "state_x": 706.8,
+    "state_y": 416.2
+  },
+  {
+    "slug": "trecostudio",
+    "name": "Treco Studio",
+    "sort_key": "treco studio",
+    "handle": "trecostudio",
+    "url": "https://www.instagram.com/trecostudio/",
+    "img": "assets/img/marcas/trecostudio.jpg",
+    "categories": [
+      "roupas",
+      "handmade"
+    ],
+    "vibes": [
+      "punk",
+      "graphic",
+      "streetwear"
+    ],
+    "price_found": false,
+    "min_price": null,
+    "max_price": null,
+    "avg_price": null,
+    "min_item": "",
+    "max_item": "",
+    "store_url": null,
+    "city": "",
+    "state": "RJ",
+    "location": "RJ",
+    "location_source": "Jornal do Estado do Rio + RDAP trecostudio.com.br (Thayna Silva Dias)",
+    "location_confidence": "medium",
+    "lat": -22.35,
+    "lon": -42.65,
+    "map_x": 1142.0,
+    "map_y": 872.0,
+    "state_x": 538.0,
+    "state_y": 399.9
   },
   {
     "slug": "twovariant",
@@ -4027,6 +4350,41 @@
     "map_y": 867.7,
     "state_x": 663.2,
     "state_y": 305.4
+  },
+  {
+    "slug": "unselfishlover",
+    "name": "Unselfish Lover",
+    "sort_key": "unselfish lover",
+    "handle": "unselfishlover",
+    "url": "https://www.instagram.com/unselfishlover/",
+    "img": "assets/img/marcas/unselfishlover.jpg",
+    "categories": [
+      "roupas",
+      "handmade"
+    ],
+    "vibes": [
+      "artisanal",
+      "contemporary",
+      "experimental"
+    ],
+    "price_found": true,
+    "min_price": 357.0,
+    "max_price": 1863.0,
+    "avg_price": 1110.0,
+    "min_item": "'Sugar-Town' two piece blouse (Sample sale)",
+    "max_item": "Cowboy's Tears Dress - Red & Pink",
+    "store_url": "https://unselfishlover.com/pt",
+    "city": "",
+    "state": "SP",
+    "location": "SP",
+    "location_source": "Site oficial (ateliê artesanal próprio no Brasil; estado padrão SP sem cidade confirmada)",
+    "location_confidence": "low",
+    "lat": -22.25,
+    "lon": -48.65,
+    "map_x": 1042.0,
+    "map_y": 872.0,
+    "state_x": 689.6,
+    "state_y": 349.0
   },
   {
     "slug": "velvet",

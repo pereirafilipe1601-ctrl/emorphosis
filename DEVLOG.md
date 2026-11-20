@@ -7,6 +7,22 @@ Mantido separado do [GEMINI.md](./GEMINI.md) para respeitar o limite de `24.000`
 
 ---
 
+## [2026-11-19] — Expansão do Catálogo M4RCAS para 141 Marcas (+10 Novas Marcas via Notion)
+**Responsável:** Filipe (+ Antigravity)
+**Arquivos principais:** `database/marcas.txt`, `database/brand_prices.json`, `database/brand_locations.json`, `assets/data/brazil_states_shapes.json`, `scripts/build_marcas.py`, `assets/js/main.js`, `assets/js/i18n.js`, `assets/img/marcas/`, `m4rcas.html`, `assets/data/marcas.json`, `database/marcas.json`, `s0br3.html`
+
+### O que mudou
+- Estruturada fila inline **`Fila de Cadastro — Novas Marcas`** no Notion dentro da tarefa `Adicionar Marcas` (`Dev Task Tracker`) com fórmulas automáticas de completude/média e 4 views (Planilha, Pendentes, Kanban e Conferência de Logos).
+- Adicionadas **10 novas marcas** ao catálogo (131 → **141 marcas**, sendo **111** com média mapeada e **30** em `Drop / Sob Consulta`):
+  - **Com preços auditados (8):** `Bobe Studios` (RS), `ByEller` (MG), `Fantasia Celeste` (São Paulo - SP), `Grama` (Curitiba - PR), `Martins` (São Paulo - SP), `Stacci` (Uberaba - MG), `Studio Lacerda` (São Paulo - SP) e `Unselfish Lover` (SP).
+  - **Drop / Sob Consulta (2):** `Theybs` (Belo Horizonte - MG) e `Treco Studio` (RJ).
+- Convertidas e padronizadas as 10 logos em `.jpg` `1:1` em `assets/img/marcas/`, atualizados os contadores e cidades de `assets/data/brazil_states_shapes.json` (incluindo `Uberaba - MG`), ajustado `assets/js/main.js` para exibir limpo marcas cadastradas apenas com UF (sem cidade), sincronizados contadores PT/EN em `assets/js/i18n.js` / `s0br3.html` e incrementado `ASSET_VER` para `20261119a`.
+
+### Contexto / Porquê
+- Expandir a curadoria nacional do diretório `M4RCAS` e do mapa interativo `H0M3` mantendo a auditoria de preços, localização e compatibilidade visual/cache-busting do site.
+
+---
+
 ## [2026-11-19] — Capa Oficial do Site (`home-bg.png`) Aplicada no Notion
 **Responsável:** Filipe (+ Antigravity)
 **Arquivos principais:** `docs/notion_assets/notion-cover.png`, `DEVLOG.md`

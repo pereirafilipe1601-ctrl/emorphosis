@@ -469,7 +469,7 @@
   };
 
   function buildBrandCmdNarrative(b, isEn) {
-    const locStr = b.location || `${b.city || "São Paulo"} - ${b.state || "SP"}`;
+    const locStr = b.location || (b.city ? `${b.city} - ${b.state || "SP"}` : (b.state || "SP"));
     const dmsStr = formatDmsCoord(b.lat || -23.5505, b.lon || -46.6333);
     const rawCats = Array.isArray(b.categories) && b.categories.length ? b.categories : ["roupas"];
     const rawVibes = Array.isArray(b.vibes) && b.vibes.length ? b.vibes : ["streetwear", "contemporary"];
@@ -814,13 +814,14 @@
                 const topPct = ((Number(b.state_y) || 330) / 660) * 100;
                 const codeNum = String(idx + 1).padStart(2, "0");
                 const avgTxt = b.price_found && b.avg_price ? `MÉDIA ${formatBrlSpy(b.avg_price)}` : "DROP / SOB CONSULTA";
+                const targetLoc = b.location || (b.city ? `${b.city} - ${b.state}` : b.state);
                 return `
                   <button
                     type="button"
                     class="os-brand-target${b.slug === lockedSpySlug ? " is-locked" : ""}"
                     data-target-slug="${b.slug}"
                     style="left:${leftPct.toFixed(2)}%; top:${topPct.toFixed(2)}%;"
-                    aria-label="Alvo ${b.name} (${b.city} - ${b.state})"
+                    aria-label="Alvo ${b.name} (${targetLoc})"
                   >
                     <span class="obt-scan" style="animation-delay:${((idx * 0.21) % 2.8).toFixed(2)}s"></span>
                     <span class="obt-reticle" aria-hidden="true"></span>
@@ -828,7 +829,7 @@
                     <span class="obt-tooltip" role="tooltip">
                       <span class="obtt-kicker">⌖ ALVO #${codeNum}</span>
                       <strong class="obtt-name">${b.name}</strong>
-                      <span class="obtt-city">📍 ${b.city.toUpperCase()} - ${b.state}</span>
+                      <span class="obtt-city">📍 ${targetLoc.toUpperCase()}</span>
                       <span class="obtt-meta">@${b.handle} • ${avgTxt}</span>
                     </span>
                   </button>
@@ -943,7 +944,7 @@
 
     const codeNum = String((currIdx >= 0 ? currIdx : 0) + 1).padStart(2, "0");
     const totalInState = String(stateBrands.length).padStart(2, "0");
-    const locStr = b.location || `${b.city || "São Paulo"} - ${b.state || "SP"}`;
+    const locStr = b.location || (b.city ? `${b.city} - ${b.state || "SP"}` : (b.state || "SP"));
 
     if (isDossierCollapsed) {
       if (cmdTypewriterTimer) {
@@ -968,7 +969,7 @@
       return;
     }
 
-    const sameCityBrands = stateBrands.filter((other) => other.city === b.city);
+    const sameCityBrands = b.city ? stateBrands.filter((other) => other.city === b.city) : [];
     const switcherPool = sameCityBrands.length > 1 ? sameCityBrands : stateBrands;
     const switcherLabel =
       sameCityBrands.length > 1
@@ -1358,8 +1359,8 @@
     initDreamCommandPrompt();
 
     Promise.all([
-      fetch("assets/data/marcas.json?v=20261118g").then((r) => (r.ok ? r.json() : [])),
-      fetch("assets/data/brazil_states_shapes.json?v=20261118g").then((r) => (r.ok ? r.json() : {}))
+      fetch("assets/data/marcas.json?v=20261119a").then((r) => (r.ok ? r.json() : [])),
+      fetch("assets/data/brazil_states_shapes.json?v=20261119a").then((r) => (r.ok ? r.json() : {}))
     ])
       .then(([brands, shapes]) => {
         if (Array.isArray(brands)) spyBrandsList = brands;

@@ -22,7 +22,7 @@ DATA_DIR = ROOT / "assets" / "data"
 UNLINKED_DIR = ROOT / "database" / "imagens_sem_link"
 PRICE_PATH = ROOT / "database" / "brand_prices.json"
 LOCATION_PATH = ROOT / "database" / "brand_locations.json"
-ASSET_VER = "20261118g"
+ASSET_VER = "20261119a"
 
 MAPPING: dict[str, tuple[str, str, str]] = {
     "1of1exclusivist": ("1of1.jpg", "1of1 Exclusivist", "1of1"),
@@ -156,6 +156,16 @@ MAPPING: dict[str, tuple[str, str, str]] = {
     "vinegar.archive.br": ("vinegar.jpg", "Vinegar Archive", "vinegar"),
     "wearvsc": ("vscwear.jpg", "Wear VSC", "wearvsc"),
     "wordly.co": ("wordly.jpg", "Wordly", "wordly"),
+    "bobestudios": ("bobestudios.jpg", "Bobe Studios", "bobe studios"),
+    "ateliebyeller": ("byeller.jpg", "ByEller", "byeller"),
+    "fantasiaceleste_": ("fantasiaceleste.jpg", "Fantasia Celeste", "fantasia celeste"),
+    "grama____": ("grama.jpg", "Grama", "grama"),
+    "martins__________": ("martins.jpg", "Martins", "martins"),
+    "usestacci": ("stacci.jpg", "Stacci", "stacci"),
+    "st.lacerda": ("studiolacerda.jpg", "Studio Lacerda", "studio lacerda"),
+    "theybs_oficial": ("theybs.jpg", "Theybs", "theybs"),
+    "trecostudio": ("trecostudio.jpg", "Treco Studio", "treco studio"),
+    "unselfishlover": ("unselfishlover.jpg", "Unselfish Lover", "unselfish lover"),
 }
 
 VIBE_OVERRIDES: dict[str, list[str]] = {
@@ -212,6 +222,16 @@ VIBE_OVERRIDES: dict[str, list[str]] = {
     "vilelaboots": ["footwear", "avantgarde", "darkwear"],
     "viga.shoes": ["footwear", "contemporary", "tailoring"],
     "agui.com.br": ["footwear", "streetwear"],
+    "bobestudios": ["streetwear", "graphic", "contemporary"],
+    "ateliebyeller": ["artisanal", "upcycling", "streetwear"],
+    "fantasiaceleste_": ["artisanal", "upcycling", "experimental"],
+    "grama____": ["contemporary", "minimal", "tailoring"],
+    "martins__________": ["avantgarde", "tailoring", "contemporary", "experimental"],
+    "usestacci": ["streetwear", "graphic", "contemporary"],
+    "st.lacerda": ["contemporary", "minimal", "graphic"],
+    "theybs_oficial": ["streetwear", "artisanal", "experimental"],
+    "trecostudio": ["punk", "graphic", "streetwear"],
+    "unselfishlover": ["artisanal", "contemporary", "experimental"],
 }
 
 

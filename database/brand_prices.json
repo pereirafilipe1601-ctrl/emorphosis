@@ -210,6 +210,20 @@
     "avg_price": 275.9
   },
   {
+    "slug": "bobestudios",
+    "name": "Bobe Studios",
+    "handle": "bobestudios",
+    "ig_url": "https://www.instagram.com/bobestudios/",
+    "found": true,
+    "store_url": "https://www.bobestudios.com.br",
+    "min_price": 180.0,
+    "min_item": "Camiseta Regular \"Basic White\"",
+    "max_price": 250.0,
+    "max_item": "Bandeira \"BASIC ERA\"",
+    "note": "",
+    "avg_price": 215.0
+  },
+  {
     "slug": "boffboy",
     "name": "Boffboy Chique",
     "handle": "boffboychique",
@@ -306,6 +320,20 @@
     "max_item": "MOLETOM AZUL MARINHO",
     "note": "",
     "avg_price": 172.77
+  },
+  {
+    "slug": "byeller",
+    "name": "ByEller",
+    "handle": "ateliebyeller",
+    "ig_url": "https://www.instagram.com/ateliebyeller/",
+    "found": true,
+    "store_url": "https://loja.menu/byeller",
+    "min_price": 75.0,
+    "min_item": "Bolsa Selly (jeans reaproveitado)",
+    "max_price": 330.0,
+    "max_item": "Moletom street",
+    "note": "",
+    "avg_price": 202.5
   },
   {
     "slug": "carnan",
@@ -686,6 +714,20 @@
     "avg_price": 1249.5
   },
   {
+    "slug": "estudioteia",
+    "name": "Teia",
+    "handle": "teiaaaaaaaaaaaaaaaaaaa",
+    "ig_url": "https://www.instagram.com/teiaaaaaaaaaaaaaaaaaaa/",
+    "found": false,
+    "store_url": "https://teia.lojavirtualnuvem.com.br",
+    "min_price": null,
+    "min_item": "",
+    "max_price": null,
+    "max_item": "",
+    "note": "Nuvemshop store currently offline ('A loja está temporariamente fora de serviço | Teia')",
+    "avg_price": null
+  },
+  {
     "slug": "eto",
     "name": "Eto Gallery",
     "handle": "etogallery",
@@ -712,6 +754,20 @@
     "max_item": "Moletom \"Rhyzome\" (EXO:DUS + AUN)",
     "note": "",
     "avg_price": 725.0
+  },
+  {
+    "slug": "fantasiaceleste",
+    "name": "Fantasia Celeste",
+    "handle": "fantasiaceleste_",
+    "ig_url": "https://www.instagram.com/fantasiaceleste_/",
+    "found": true,
+    "store_url": "https://fantasiaceleste.com",
+    "min_price": 102.6,
+    "min_item": "Colar Silver Heart",
+    "max_price": 1597.9,
+    "max_item": "Vestido Vale Dourado",
+    "note": "",
+    "avg_price": 850.25
   },
   {
     "slug": "fantasma",
@@ -754,6 +810,20 @@
     "max_item": "CALÇA DOUBLE WAIST",
     "note": "",
     "avg_price": 178.9
+  },
+  {
+    "slug": "grama",
+    "name": "Grama",
+    "handle": "grama____",
+    "ig_url": "https://www.instagram.com/grama____/",
+    "found": true,
+    "store_url": "https://grama.me",
+    "min_price": 59.4,
+    "min_item": "Top Gabrielle Terracota",
+    "max_price": 1598.0,
+    "max_item": "Trench Coat Agnes Xadrez",
+    "note": "",
+    "avg_price": 828.7
   },
   {
     "slug": "gurte",
@@ -1062,6 +1132,20 @@
     "max_item": "",
     "note": "Handmade brand (@fashiondwsign / Maison RefTaylor) operating via Instagram",
     "avg_price": null
+  },
+  {
+    "slug": "martins",
+    "name": "Martins",
+    "handle": "martins__________",
+    "ig_url": "https://www.instagram.com/martins__________/",
+    "found": true,
+    "store_url": "https://www.martinssp.com/",
+    "min_price": 280.0,
+    "min_item": "Colar Escapulário / Fox Faux Fur Charm",
+    "max_price": 5890.0,
+    "max_item": "Bolsa Kôia",
+    "note": "",
+    "avg_price": 3085.0
   },
   {
     "slug": "melania",
@@ -1666,17 +1750,59 @@
     "avg_price": 169.0
   },
   {
-    "slug": "estudioteia",
-    "name": "Teia",
-    "handle": "teiaaaaaaaaaaaaaaaaaaa",
-    "ig_url": "https://www.instagram.com/teiaaaaaaaaaaaaaaaaaaa/",
+    "slug": "stacci",
+    "name": "Stacci",
+    "handle": "usestacci",
+    "ig_url": "https://www.instagram.com/usestacci/",
+    "found": true,
+    "store_url": "https://usestacci.com.br",
+    "min_price": 28.0,
+    "min_item": "Faixas Polka Dots",
+    "max_price": 540.0,
+    "max_item": "Vestido Tulipa Negra",
+    "note": "",
+    "avg_price": 284.0
+  },
+  {
+    "slug": "studiolacerda",
+    "name": "Studio Lacerda",
+    "handle": "st.lacerda",
+    "ig_url": "https://www.instagram.com/st.lacerda/",
+    "found": true,
+    "store_url": "https://studio-lacerda.com/pt-br",
+    "min_price": 396.0,
+    "min_item": "Top Brasília",
+    "max_price": 699.0,
+    "max_item": "Mãe Set",
+    "note": "Preços base em EUR convertidos para BRL no /pt-br",
+    "avg_price": 547.5
+  },
+  {
+    "slug": "theybs",
+    "name": "Theybs",
+    "handle": "theybs_oficial",
+    "ig_url": "https://www.instagram.com/theybs_oficial/",
     "found": false,
-    "store_url": "https://teia.lojavirtualnuvem.com.br",
+    "store_url": null,
     "min_price": null,
     "min_item": "",
     "max_price": null,
     "max_item": "",
-    "note": "Nuvemshop store currently offline ('A loja está temporariamente fora de serviço | Teia')",
+    "note": "Sob consulta",
+    "avg_price": null
+  },
+  {
+    "slug": "trecostudio",
+    "name": "Treco Studio",
+    "handle": "trecostudio",
+    "ig_url": "https://www.instagram.com/trecostudio/",
+    "found": false,
+    "store_url": null,
+    "min_price": null,
+    "min_item": "",
+    "max_price": null,
+    "max_item": "",
+    "note": "Sem site ativo / Drop ou sob consulta",
     "avg_price": null
   },
   {
@@ -1734,6 +1860,20 @@
     "max_item": "misprint jacket",
     "note": "",
     "avg_price": 205.75
+  },
+  {
+    "slug": "unselfishlover",
+    "name": "Unselfish Lover",
+    "handle": "unselfishlover",
+    "ig_url": "https://www.instagram.com/unselfishlover/",
+    "found": true,
+    "store_url": "https://unselfishlover.com/pt",
+    "min_price": 357.0,
+    "min_item": "'Sugar-Town' two piece blouse (Sample sale)",
+    "max_price": 1863.0,
+    "max_item": "Cowboy's Tears Dress - Red & Pink",
+    "note": "Preços Shopify convertidos de GBP para BRL (gift card excluído)",
+    "avg_price": 1110.0
   },
   {
     "slug": "velvet",
