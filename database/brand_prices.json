@@ -182,6 +182,20 @@
     "avg_price": 454.0
   },
   {
+    "slug": "armura",
+    "name": "Armura",
+    "handle": "armuraa",
+    "ig_url": "https://www.instagram.com/armuraa/",
+    "found": true,
+    "store_url": "https://www.armuraestudio.com",
+    "min_price": 250.0,
+    "min_item": "saia de luz tempestuosa",
+    "max_price": 1000.0,
+    "max_item": "jaqueta asa rubra",
+    "note": "",
+    "avg_price": 625.0
+  },
+  {
     "slug": "beer",
     "name": "Beer",
     "handle": "b_____________eeer",
@@ -192,7 +206,7 @@
     "min_item": "",
     "max_price": null,
     "max_item": "",
-    "note": "Nuvemshop store temporarily offline ('A loja está temporariamente fora de serviço')",
+    "note": "Drop / sob consulta",
     "avg_price": null
   },
   {
@@ -210,14 +224,14 @@
     "avg_price": 275.9
   },
   {
-    "slug": "bobestudios",
+    "slug": "bobe",
     "name": "Bobe Studios",
     "handle": "bobestudios",
     "ig_url": "https://www.instagram.com/bobestudios/",
     "found": true,
     "store_url": "https://www.bobestudios.com.br",
     "min_price": 180.0,
-    "min_item": "Camiseta Regular \"Basic White\"",
+    "min_item": "Camiseta Regular “Basic Black”",
     "max_price": 250.0,
     "max_item": "Bandeira \"BASIC ERA\"",
     "note": "",
@@ -234,7 +248,7 @@
     "min_item": "",
     "max_price": null,
     "max_item": "",
-    "note": "Official Nuvemshop store active (links to @boffboychique), but 0 products currently listed",
+    "note": "Drop / sob consulta",
     "avg_price": null
   },
   {
@@ -262,7 +276,7 @@
     "min_item": "",
     "max_price": null,
     "max_item": "",
-    "note": "Upcycling/handmade 1/1 brand operating via Instagram (@borra_malware)",
+    "note": "Drop / sob consulta",
     "avg_price": null
   },
   {
@@ -416,7 +430,7 @@
     "min_item": "",
     "max_price": null,
     "max_item": "",
-    "note": "Store closed/maintenance ('We're working on our shop right now'); handmade 925 silver jewelry brand",
+    "note": "Drop / sob consulta",
     "avg_price": null
   },
   {
@@ -444,7 +458,7 @@
     "min_item": "",
     "max_price": null,
     "max_item": "",
-    "note": "Loja oficial ativa, sem produtos cadastrados no momento (drop fechado)",
+    "note": "Drop / sob consulta",
     "avg_price": null
   },
   {
@@ -458,7 +472,7 @@
     "min_item": "",
     "max_price": null,
     "max_item": "",
-    "note": "Handmade upcycling/patchwork brand by Will Cypriano operating via limited drops on Instagram",
+    "note": "Drop / sob consulta",
     "avg_price": null
   },
   {
@@ -556,7 +570,7 @@
     "min_item": "",
     "max_price": null,
     "max_item": "",
-    "note": "Domain disorder.com.br currently offline/unreachable (DNS NXDOMAIN)",
+    "note": "Drop / sob consulta",
     "avg_price": null
   },
   {
@@ -584,7 +598,7 @@
     "min_item": "",
     "max_price": null,
     "max_item": "",
-    "note": "Operates via Instagram drops (@dope__studios); no active standalone e-commerce found",
+    "note": "Drop / sob consulta",
     "avg_price": null
   },
   {
@@ -598,7 +612,7 @@
     "min_item": "",
     "max_price": null,
     "max_item": "",
-    "note": "Modular/handmade brand operating via Instagram and physical pop-ups/events (@dothproject)",
+    "note": "Drop / sob consulta",
     "avg_price": null
   },
   {
@@ -682,7 +696,7 @@
     "min_item": "",
     "max_price": null,
     "max_item": "",
-    "note": "Eclat Sty Ltda (Votorantim/SP) — no active public e-commerce store with prices found",
+    "note": "Drop / sob consulta",
     "avg_price": null
   },
   {
@@ -724,7 +738,7 @@
     "min_item": "",
     "max_price": null,
     "max_item": "",
-    "note": "Nuvemshop store currently offline ('A loja está temporariamente fora de serviço | Teia')",
+    "note": "Drop / sob consulta",
     "avg_price": null
   },
   {
@@ -818,12 +832,12 @@
     "ig_url": "https://www.instagram.com/grama____/",
     "found": true,
     "store_url": "https://grama.me",
-    "min_price": 59.4,
-    "min_item": "Top Gabrielle Terracota",
-    "max_price": 1598.0,
-    "max_item": "Trench Coat Agnes Xadrez",
+    "min_price": 48.0,
+    "min_item": "Blusa Camille",
+    "max_price": 3958.0,
+    "max_item": "Blusa Teodora Tricot Manual (SOB ENCOMENDA)",
     "note": "",
-    "avg_price": 828.7
+    "avg_price": 2003.0
   },
   {
     "slug": "gurte",
@@ -962,7 +976,7 @@
     "min_item": "",
     "max_price": null,
     "max_item": "",
-    "note": "Operates via Instagram drops (@iniquity____); no active standalone e-commerce found",
+    "note": "Drop / sob consulta",
     "avg_price": null
   },
   {
@@ -976,7 +990,7 @@
     "min_item": "",
     "max_price": null,
     "max_item": "",
-    "note": "Nuvemshop store created but unconfigured (only default Nuvemshop template placeholders, 0 real products in sitemap)",
+    "note": "Drop / sob consulta",
     "avg_price": null
   },
   {
@@ -1004,7 +1018,7 @@
     "min_item": "",
     "max_price": null,
     "max_item": "",
-    "note": "Nuvemshop store temporarily offline ('A loja está temporariamente fora de serviço | Kg studios')",
+    "note": "Drop / sob consulta",
     "avg_price": null
   },
   {
@@ -1074,7 +1088,7 @@
     "min_item": "",
     "max_price": null,
     "max_item": "",
-    "note": "Sustainable upcycling/handmade brand by Arthur Lobo (Joinville/SC); operates via Linktree/Instagram",
+    "note": "Drop / sob consulta",
     "avg_price": null
   },
   {
@@ -1102,7 +1116,7 @@
     "min_item": "",
     "max_price": null,
     "max_item": "",
-    "note": "São Paulo streetwear/skate brand (@lykd_studio); no active public e-commerce store found",
+    "note": "Drop / sob consulta",
     "avg_price": null
   },
   {
@@ -1130,7 +1144,7 @@
     "min_item": "",
     "max_price": null,
     "max_item": "",
-    "note": "Handmade brand (@fashiondwsign / Maison RefTaylor) operating via Instagram",
+    "note": "Drop / sob consulta",
     "avg_price": null
   },
   {
@@ -1139,11 +1153,11 @@
     "handle": "martins__________",
     "ig_url": "https://www.instagram.com/martins__________/",
     "found": true,
-    "store_url": "https://www.martinssp.com/",
+    "store_url": "https://www.martinssp.com",
     "min_price": 280.0,
-    "min_item": "Colar Escapulário / Fox Faux Fur Charm",
+    "min_item": "COLAR ESCAPULÁRIO ALEXANDER MCQUEEN",
     "max_price": 5890.0,
-    "max_item": "Bolsa Kôia",
+    "max_item": "BOLSA KÔIA - ZEBRA PRETO E BRANCO",
     "note": "",
     "avg_price": 3085.0
   },
@@ -1158,7 +1172,7 @@
     "min_item": "",
     "max_price": null,
     "max_item": "",
-    "note": "Loja oficial ativa (Yampi), catálogo fechado entre drops",
+    "note": "Drop / sob consulta",
     "avg_price": null
   },
   {
@@ -1172,7 +1186,7 @@
     "min_item": "",
     "max_price": null,
     "max_item": "",
-    "note": "Independent brand (@mldyy444 / Melody) operating via Instagram drops",
+    "note": "Drop / sob consulta",
     "avg_price": null
   },
   {
@@ -1214,7 +1228,7 @@
     "min_item": "$PARKO Shorts Black / Grey",
     "max_price": 299.0,
     "max_item": "$PARKO Hoodie / Zip Up Hoodie",
-    "note": "Store currently on /password/; prices retrieved from Google-indexed product pages on monadaxyz.com",
+    "note": "",
     "avg_price": 254.0
   },
   {
@@ -1228,7 +1242,7 @@
     "min_item": "",
     "max_price": null,
     "max_item": "",
-    "note": "Nuvemshop store currently offline ('A loja está temporariamente fora de serviço | MORTE VISUAL')",
+    "note": "Drop / sob consulta",
     "avg_price": null
   },
   {
@@ -1244,6 +1258,20 @@
     "max_item": "JAQUETA NAICE MACK",
     "note": "",
     "avg_price": 199.0
+  },
+  {
+    "slug": "newcultdestroy",
+    "name": "New Cult Destroy",
+    "handle": "newcultdestroy",
+    "ig_url": "https://www.instagram.com/newcultdestroy/",
+    "found": true,
+    "store_url": "https://www.newcultdestroy.com",
+    "min_price": 99.0,
+    "min_item": "PANCHIKO [ALTERNATIVE CUSTOM]",
+    "max_price": 6700.0,
+    "max_item": "DESTROY [BANANA]",
+    "note": "",
+    "avg_price": 3399.5
   },
   {
     "slug": "nilme",
@@ -1284,7 +1312,7 @@
     "min_item": "",
     "max_price": null,
     "max_item": "",
-    "note": "Official store is on Shopee (shopee.com.br/ninfacyborg); ninfacyborg.lojavirtualnuvem.com.br only has Nuvemshop placeholder items",
+    "note": "Drop / sob consulta",
     "avg_price": null
   },
   {
@@ -1344,6 +1372,20 @@
     "avg_price": 442.5
   },
   {
+    "slug": "outlier",
+    "name": "Atelier Outlier",
+    "handle": "outliertlr",
+    "ig_url": "https://www.instagram.com/outliertlr/",
+    "found": true,
+    "store_url": "https://www.atelieroutlier.com.br",
+    "min_price": 50.0,
+    "min_item": "HOD-*02",
+    "max_price": 223.3,
+    "max_item": "PTS-*06",
+    "note": "",
+    "avg_price": 136.65
+  },
+  {
     "slug": "pace",
     "name": "Pace",
     "handle": "pace",
@@ -1368,7 +1410,7 @@
     "min_item": "",
     "max_price": null,
     "max_item": "",
-    "note": "Nuvemshop store only contains default placeholder items ('Produto de exemplo')",
+    "note": "Drop / sob consulta",
     "avg_price": null
   },
   {
@@ -1424,7 +1466,7 @@
     "min_item": "Camiseta \"Heaven\" Preta",
     "max_price": 439.9,
     "max_item": "Zip-Hoodie \"Seventh\" Preto",
-    "note": "Store currently on /password; prices retrieved from Google-indexed product pages on preux.com.br",
+    "note": "",
     "avg_price": 329.9
   },
   {
@@ -1494,7 +1536,7 @@
     "min_item": "Ruined slub",
     "max_price": 239.9,
     "max_item": "Ruined slub",
-    "note": "Nuvemshop store currently offline; product price retrieved from Google-indexed page on requiemfi.com.br",
+    "note": "",
     "avg_price": 239.9
   },
   {
@@ -1508,7 +1550,7 @@
     "min_item": "",
     "max_price": null,
     "max_item": "",
-    "note": "Store currently password-protected (/password/)",
+    "note": "Drop / sob consulta",
     "avg_price": null
   },
   {
@@ -1522,7 +1564,7 @@
     "min_item": "",
     "max_price": null,
     "max_item": "",
-    "note": "No official e-commerce website found (drops via Instagram)",
+    "note": "Drop / sob consulta",
     "avg_price": null
   },
   {
@@ -1536,7 +1578,7 @@
     "min_item": "",
     "max_price": null,
     "max_item": "",
-    "note": "Nuvemshop store currently offline ('A loja está temporariamente fora de serviço | Saintephemere')",
+    "note": "Drop / sob consulta",
     "avg_price": null
   },
   {
@@ -1578,7 +1620,7 @@
     "min_item": "",
     "max_price": null,
     "max_item": "",
-    "note": "No official e-commerce website found",
+    "note": "Drop / sob consulta",
     "avg_price": null
   },
   {
@@ -1676,7 +1718,7 @@
     "min_item": "",
     "max_price": null,
     "max_item": "",
-    "note": "No active official e-commerce website found",
+    "note": "Drop / sob consulta",
     "avg_price": null
   },
   {
@@ -1764,18 +1806,18 @@
     "avg_price": 284.0
   },
   {
-    "slug": "studiolacerda",
+    "slug": "stlacerda",
     "name": "Studio Lacerda",
     "handle": "st.lacerda",
     "ig_url": "https://www.instagram.com/st.lacerda/",
     "found": true,
-    "store_url": "https://studio-lacerda.com/pt-br",
-    "min_price": 396.0,
-    "min_item": "Top Brasília",
-    "max_price": 699.0,
-    "max_item": "Mãe Set",
-    "note": "Preços base em EUR convertidos para BRL no /pt-br",
-    "avg_price": 547.5
+    "store_url": "https://studio-lacerda.com.br",
+    "min_price": 270.0,
+    "min_item": "Saia Brasília",
+    "max_price": 755.0,
+    "max_item": "Kit tops",
+    "note": "",
+    "avg_price": 512.5
   },
   {
     "slug": "theybs",
@@ -1867,13 +1909,13 @@
     "handle": "unselfishlover",
     "ig_url": "https://www.instagram.com/unselfishlover/",
     "found": true,
-    "store_url": "https://unselfishlover.com/pt",
-    "min_price": 357.0,
-    "min_item": "'Sugar-Town' two piece blouse (Sample sale)",
-    "max_price": 1863.0,
+    "store_url": "https://unselfishlover.com",
+    "min_price": 356.0,
+    "min_item": "‘Sugar-Town’ two piece blouse - Sample sale",
+    "max_price": 1854.0,
     "max_item": "Cowboy's Tears Dress - Red & Pink",
-    "note": "Preços Shopify convertidos de GBP para BRL (gift card excluído)",
-    "avg_price": 1110.0
+    "note": "",
+    "avg_price": 1105.0
   },
   {
     "slug": "velvet",
@@ -1928,7 +1970,7 @@
     "min_item": "Coturno Vilela Boots Infantil Ziper - Preto",
     "max_price": 661.0,
     "max_item": "Coturno Vilela Boots Cano Alto Com 5 Fivelas - Preto",
-    "note": "vilelaboots.com.br has an empty SPA shell; prices retrieved from official Galeria do Rock retailer catalog (galleryrock.com.br/vilela-boots)",
+    "note": "",
     "avg_price": 430.0
   },
   {
@@ -1942,7 +1984,7 @@
     "min_item": "",
     "max_price": null,
     "max_item": "",
-    "note": "No active official e-commerce website found",
+    "note": "Drop / sob consulta",
     "avg_price": null
   },
   {

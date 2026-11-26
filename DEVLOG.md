@@ -7,6 +7,23 @@ Mantido separado do [GEMINI.md](./GEMINI.md) para respeitar o limite de `24.000`
 
 ---
 
+## [2026-11-26] — Merge 3-Way Hostinger + Local (144 Marcas, 12 Estados, C0MUN1DAD3 & Colab New Cult Destroy)
+**Responsável:** Filipe (+ Antigravity)
+**Arquivos principais:** `c0mun1dad3.html`, `newcultdestroy.html`, `api/mailer.php`, `assets/css/style.css`, `assets/js/main.js`, `assets/js/i18n.js`, `assets/data/brazil_states_shapes.json`, `assets/audio/`, `assets/fonts/`, `assets/img/colab/`, `assets/img/comunidade/`, `assets/img/marcas/`, `database/marcas.txt`, `database/brand_prices.json`, `database/brand_locations.json`, `scripts/build_marcas.py`, `scripts/deploy_ftp.py`, `m4rcas.html`, `index.html`, `c4l3ndar10.html`, `s0br3.html`, `marca.html`
+
+### O que mudou
+- Sincronizadas e mescladas integralmente as alterações feitas em produção na Hostinger (que ainda não estavam no Git) com a nossa expansão local de marcas:
+  - **Novas páginas e assets da Hostinger trazidos ao repositório:** `c0mun1dad3.html` (`C0MUN1DAD3` + áudios `assets/audio/`, fontes `assets/fonts/` e acervo `assets/img/comunidade/`), `newcultdestroy.html` (Colab Emorphosis × New Cult Destroy + `assets/img/colab/` + link de topo em `index.html`), `api/mailer.php`, estilos em `assets/css/style.css` e link `C0MUN1DAD3` no `<nav>` de todas as páginas (incluindo o template em `scripts/build_marcas.py`).
+  - **Catálogo unificado para 144 marcas em 12 estados (`CE` e `PE` adicionados ao mapa H0M3):**
+    - Incorporadas as 3 marcas exclusivas da Hostinger: `Armura` (Recife - PE), `New Cult Destroy` (São Paulo - SP) e `Atelier Outlier` (Fortaleza - CE).
+    - Nas 10 marcas em comum, combinamos o melhor dado verificado de cada lado: localizações exatas da Hostinger (`Cachoeirinha - RS` para Bobe Studios, `Contagem - MG` para ByEller, `Rio de Janeiro - RJ` para Treco Studio, `Brasília - DF` para Unselfish Lover), preços nacionais da Hostinger para `Grama` (`R$ 48–3.958`) e `Studio Lacerda` (`studio-lacerda.com.br`, `R$ 270–755`), mantendo nossa auditoria de preços mais completa para `ByEller` (`loja.menu/byeller`, `R$ 75–330`), `Fantasia Celeste` (`R$ 102,60–1.597,90`) e `Stacci` (`R$ 28–540`), além das nossas 10 logos `300×300`/`192×192` revisadas (incluindo `trecostudio.jpg` invertida em fundo preto e `stlacerda.jpg` cursiva limpa) alinhadas aos slugs ativos (`bobe`, `stlacerda`).
+  - Atualizados `assets/js/main.js` (`12 ESTADOS`, posicionamento mobile e fallback seguro sem cidade), `assets/js/i18n.js` (`144` marcas / `114` mapeadas / `30` Drop/Sob Consulta), `ASSET_VER` (`20261126g`) e skip de `.m4a`/`.ttf`/`.otf` em `scripts/deploy_ftp.py`.
+
+### Contexto / Porquê
+- Evitar sobrescrever em um deploy FTPS as páginas novas (`C0MUN1DAD3`, `newcultdestroy.html`), estados (`CE`/`PE`) e marcas enviadas diretamente para a Hostinger pelo outro desenvolvedor, consolidando uma única fonte de verdade reproduzível via Git e `build_marcas.py`.
+
+---
+
 ## [2026-11-19] — Expansão do Catálogo M4RCAS para 141 Marcas (+10 Novas Marcas via Notion)
 **Responsável:** Filipe (+ Antigravity)
 **Arquivos principais:** `database/marcas.txt`, `database/brand_prices.json`, `database/brand_locations.json`, `assets/data/brazil_states_shapes.json`, `scripts/build_marcas.py`, `assets/js/main.js`, `assets/js/i18n.js`, `assets/img/marcas/`, `m4rcas.html`, `assets/data/marcas.json`, `database/marcas.json`, `s0br3.html`

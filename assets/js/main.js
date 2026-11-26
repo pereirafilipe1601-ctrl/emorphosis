@@ -136,7 +136,7 @@
     cols: null
   };
 
-  fetch("assets/data/brazil_map_bounds.json?v=20261111c")
+  fetch("assets/data/brazil_map_bounds.json?v=20261126g")
     .then((r) => (r.ok ? r.json() : null))
     .then((json) => {
       if (json && json.pixelBounds && json.rows && json.cols) {
@@ -436,7 +436,7 @@
   let isDossierCollapsed = false;
   let cmdTypewriterTimer = null;
 
-  const STATE_ORDER = ["SP", "SC", "PR", "RS", "RJ", "MG", "ES", "GO", "DF", "RN"];
+  const STATE_ORDER = ["SP", "SC", "PR", "MG", "RJ", "RS", "ES", "DF", "CE", "GO", "PE", "RN"];
 
   const CAT_LABELS_PT = {
     roupas: "roupas e vestuário autoral",
@@ -632,7 +632,13 @@
 
     if (isMobileView) {
       const imgBotPos = imagePixelToScreen(1280, 1440);
-      const safeTop = Math.max(150, Math.min(window.innerHeight - 195, imgBotPos.y + 8));
+      const controlsTop = Math.max(145, Math.min(window.innerHeight - 215, imgBotPos.y + 6));
+      if (leftControlsEl) {
+        leftControlsEl.style.left = "50%";
+        leftControlsEl.style.top = `${controlsTop.toFixed(1)}px`;
+      }
+      const controlsH = leftControlsEl ? (leftControlsEl.offsetHeight || 28) : 28;
+      const safeTop = controlsTop + controlsH + 8;
       mainStatesBeaconsEl.style.top = `${safeTop.toFixed(1)}px`;
     } else {
       mainStatesBeaconsEl.style.top = "";
@@ -1359,8 +1365,8 @@
     initDreamCommandPrompt();
 
     Promise.all([
-      fetch("assets/data/marcas.json?v=20261119a").then((r) => (r.ok ? r.json() : [])),
-      fetch("assets/data/brazil_states_shapes.json?v=20261119a").then((r) => (r.ok ? r.json() : {}))
+      fetch("assets/data/marcas.json?v=20261126g").then((r) => (r.ok ? r.json() : [])),
+      fetch("assets/data/brazil_states_shapes.json?v=20261126g").then((r) => (r.ok ? r.json() : {}))
     ])
       .then(([brands, shapes]) => {
         if (Array.isArray(brands)) spyBrandsList = brands;
@@ -1384,7 +1390,7 @@
       leftControlsEl = document.createElement("div");
       leftControlsEl.className = "map-left-controls";
       leftControlsEl.innerHTML = `
-        <button type="button" class="map-left-action-btn map-radar-spy-toggle-btn active" title="Mostrar/ocultar setores estaduais com marcas no mapa">⌖ 10 ESTADOS</button>
+        <button type="button" class="map-left-action-btn map-radar-spy-toggle-btn active" title="Mostrar/ocultar setores estaduais com marcas no mapa">⌖ 12 ESTADOS</button>
         <button type="button" class="map-left-action-btn map-radar-gps-btn" title="Calibrar posição com permissão do navegador">📍 GPS</button>
       `;
       const spyToggleBtn = leftControlsEl.querySelector(".map-radar-spy-toggle-btn");
@@ -1417,10 +1423,11 @@
     const isMobileView = window.innerWidth <= 820;
     leftControlsEl.classList.toggle("is-mobile-above-hud", isMobileView);
     if (isMobileView) {
-      // No telefone: centraliza o botão de estados (+ GPS se visível) na mesma linha horizontal acima da barra "RADAR ATIVO"
-      const hudHeight = hudEl.offsetHeight || 26;
+      // No telefone: posiciona o botão de estados levemente abaixo da imagem central e acima dos botões dos estados
+      const imgBotPos = imagePixelToScreen(1280, 1440);
+      const controlsTop = Math.max(145, Math.min(window.innerHeight - 215, imgBotPos.y + 6));
       leftControlsEl.style.left = "50%";
-      leftControlsEl.style.top = `${(hudPos.y - hudHeight - 6).toFixed(1)}px`;
+      leftControlsEl.style.top = `${controlsTop.toFixed(1)}px`;
     } else {
       // No desktop: posiciona os 2 botões levemente maiores à esquerda do mapa do Brasil
       const leftMapPos = imagePixelToScreen(465, 515);
@@ -1451,7 +1458,7 @@
 
     const spyToggleBtn = leftControlsEl.querySelector(".map-radar-spy-toggle-btn");
     if (spyToggleBtn) {
-      spyToggleBtn.textContent = isEn ? "⌖ 10 STATES" : "⌖ 10 ESTADOS";
+      spyToggleBtn.textContent = isEn ? "⌖ 12 STATES" : "⌖ 12 ESTADOS";
       spyToggleBtn.classList.toggle("active", showSpyTargets);
     }
 

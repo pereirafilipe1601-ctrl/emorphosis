@@ -148,7 +148,7 @@ def upload_directory(ftp: ftplib.FTP, local_dir: Path, force: bool = False) -> i
             if (
                 not force
                 and not force_marcas
-                and item.suffix.lower() in {".mp4", ".webm", ".mov", ".jpg", ".jpeg", ".png", ".webp"}
+                and item.suffix.lower() in {".mp4", ".webm", ".mov", ".m4a", ".ttf", ".otf", ".jpg", ".jpeg", ".png", ".webp"}
                 and remote_sizes.get(item.name) == item.stat().st_size
             ):
                 continue

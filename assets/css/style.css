@@ -2568,13 +2568,13 @@ body {
   pointer-events: auto;
 }
 
-/* No telefone: centraliza o botão de 10 estados (+ GPS) na mesma linha horizontal acima da barra "RADAR ATIVO" */
+/* No telefone: posiciona o botão de estados levemente abaixo da imagem central e acima dos botões dos estados */
 .map-left-controls.is-mobile-above-hud {
   flex-direction: row;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  transform: translate(-50%, -100%);
+  transform: translateX(-50%);
 }
 
 .map-left-controls.is-mobile-above-hud .map-left-action-btn {
@@ -4791,3 +4791,1485 @@ body {
     font-size: 10.5px;
   }
 }
+
+/* ==========================================================================
+   COLAB: EMORPHOSIS X NEW CULT DESTROY (H0M3 LINK & PÁGINA DEDICADA)
+   ========================================================================== */
+
+@font-face {
+  font-family: "Scorched Earth";
+  src: url("../fonts/scorched_earth.otf?v=20261124g") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Link no canto superior esquerdo da página inicial (H0M3) — fonte Scorched Earth branca com outline preta, sem glow verde */
+.home-colab-corner-link {
+  position: absolute;
+  top: 18px;
+  left: 24px;
+  z-index: 35;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: #ffffff;
+  font-family: "Scorched Earth", "Silkscreen", "Share Tech Mono", var(--font-cyber), monospace;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: lowercase;
+  text-decoration: none;
+  paint-order: stroke fill;
+  -webkit-text-stroke: 2.2px #000000;
+  text-shadow:
+    -1.2px -1.2px 0 #000000,
+     1.2px -1.2px 0 #000000,
+    -1.2px  1.2px 0 #000000,
+     1.2px  1.2px 0 #000000;
+  filter: none;
+  transition: transform 0.2s ease;
+}
+
+.home-colab-corner-link:hover {
+  color: #ffffff;
+  transform: translateY(-1px) scale(1.03);
+  text-shadow:
+    -1.2px -1.2px 0 #000000,
+     1.2px -1.2px 0 #000000,
+    -1.2px  1.2px 0 #000000,
+     1.2px  1.2px 0 #000000;
+  filter: none;
+}
+
+/* Página da Colab: newcultdestroy.html */
+body.page-colab-ncd {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  margin: 0;
+  background: #030503;
+  color: #ffffff;
+  overflow-x: hidden;
+}
+
+/* Fundo oficial de tela inteira da página da Colab (imagem completa sem recorte) */
+.colab-full-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  background: #050705;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.colab-full-bg-img {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  object-position: center center;
+  display: block;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: high-quality;
+}
+
+@media (max-width: 820px) {
+  .colab-full-bg-img {
+    object-fit: contain;
+  }
+}
+
+/* Fundo dividido legado */
+.colab-split-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  pointer-events: none;
+  background: #030503;
+}
+
+.colab-half {
+  position: relative;
+  width: 100%;
+  height: 50vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.colab-half-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: high-quality;
+}
+
+.colab-half-top .colab-half-img {
+  opacity: 1;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.96) 0%,
+    rgba(0, 0, 0, 1) 10%,
+    rgba(0, 0, 0, 1) 86%,
+    rgba(0, 0, 0, 0.18) 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.96) 0%,
+    rgba(0, 0, 0, 1) 10%,
+    rgba(0, 0, 0, 1) 86%,
+    rgba(0, 0, 0, 0.18) 100%
+  );
+}
+
+.colab-half-bottom .colab-half-img {
+  opacity: 1;
+  -webkit-mask-image: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.98) 0%,
+    rgba(0, 0, 0, 1) 10%,
+    rgba(0, 0, 0, 1) 86%,
+    rgba(0, 0, 0, 0.18) 100%
+  );
+  mask-image: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.98) 0%,
+    rgba(0, 0, 0, 1) 10%,
+    rgba(0, 0, 0, 1) 86%,
+    rgba(0, 0, 0, 0.18) 100%
+  );
+}
+
+.colab-half-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 94% 92% at 50% 50%,
+    rgba(0, 0, 0, 0) 68%,
+    rgba(0, 0, 0, 0.35) 90%,
+    rgba(0, 0, 0, 0.72) 100%
+  );
+  pointer-events: none;
+}
+
+/* Header da Colab: título centralizado no topo em fonte estilizada */
+.colab-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 45;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px 24px;
+  pointer-events: none;
+}
+
+.colab-back-home {
+  position: absolute;
+  top: 18px;
+  left: 22px;
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: #ffffff;
+  font-family: "Scorched Earth", "Share Tech Mono", var(--font-cyber), monospace;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  paint-order: stroke fill;
+  -webkit-text-stroke: 2px #000000;
+  text-shadow:
+    -1.2px -1.2px 0 #000000,
+     1.2px -1.2px 0 #000000,
+    -1.2px  1.2px 0 #000000,
+     1.2px  1.2px 0 #000000;
+  filter: none;
+  transition: transform 0.2s ease;
+}
+
+.colab-back-home:hover {
+  color: #ffffff;
+  transform: scale(1.05);
+  text-shadow:
+    -1.2px -1.2px 0 #000000,
+     1.2px -1.2px 0 #000000,
+    -1.2px  1.2px 0 #000000,
+     1.2px  1.2px 0 #000000;
+}
+
+.colab-top-title {
+  position: relative;
+  margin: 0;
+  padding: 6px 14px;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  font-family: "Scorched Earth", "Silkscreen", "Rubik Glitch", "Share Tech Mono", var(--font-cyber), monospace;
+  font-size: clamp(22px, 3.2vw, 38px);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: lowercase;
+  text-align: center;
+  color: #ffffff;
+  paint-order: stroke fill;
+  -webkit-text-stroke: 3px #000000;
+  text-shadow:
+    -1.5px -1.5px 0 #000000,
+     1.5px -1.5px 0 #000000,
+    -1.5px  1.5px 0 #000000,
+     1.5px  1.5px 0 #000000;
+  filter: none;
+  pointer-events: auto;
+}
+
+/* Palco de conteúdos espalhados com blend e degradê leve nas bordas */
+.colab-scatter-stage {
+  position: relative;
+  z-index: 20;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.colab-scatter-item {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: #ffffff;
+  width: clamp(135px, 14.5vw, 215px);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), filter 0.35s ease, z-index 0s;
+  z-index: 22;
+}
+
+.colab-scatter-media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 18px;
+  /* Degradê leve apenas na borda externa entre o conteúdo e o fundo da página, mantendo o centro 100% nítido */
+  -webkit-mask-image: radial-gradient(
+    ellipse 84% 84% at 50% 50%,
+    rgba(0, 0, 0, 1) 66%,
+    rgba(0, 0, 0, 0.85) 80%,
+    rgba(0, 0, 0, 0.35) 92%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  mask-image: radial-gradient(
+    ellipse 84% 84% at 50% 50%,
+    rgba(0, 0, 0, 1) 66%,
+    rgba(0, 0, 0, 0.85) 80%,
+    rgba(0, 0, 0, 0.35) 92%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  filter: drop-shadow(0 0 16px rgba(0, 0, 0, 0.75));
+}
+
+.colab-scatter-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 86% 86% at 50% 50%,
+    rgba(0, 0, 0, 0) 70%,
+    rgba(3, 5, 3, 0.35) 88%,
+    rgba(3, 5, 3, 0.85) 100%
+  );
+  pointer-events: none;
+}
+
+.colab-scatter-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 1;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: high-quality;
+  transition: transform 0.4s ease, filter 0.35s ease;
+}
+
+.colab-scatter-tag {
+  margin-top: -6px;
+  padding: 2px 6px;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  font-family: "Scorched Earth", "Share Tech Mono", var(--font-cyber), monospace;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+  paint-order: stroke fill;
+  -webkit-text-stroke: 1.8px #000000;
+  text-shadow:
+    -1px -1px 0 #000000,
+     1px -1px 0 #000000,
+    -1px  1px 0 #000000,
+     1px  1px 0 #000000,
+     0 0 5px #39ff48,
+     0 0 10px #39ff48,
+     0 0 16px #19f028,
+     0 0 24px rgba(57, 255, 72, 0.95);
+  filter: drop-shadow(0 0 5px rgba(57, 255, 72, 0.92));
+  opacity: 0.95;
+  transition: opacity 0.25s ease, transform 0.25s ease, text-shadow 0.25s ease;
+  white-space: nowrap;
+}
+
+.colab-scatter-item:hover {
+  z-index: 38;
+  transform: scale(1.1) translateY(-4px) !important;
+}
+
+.colab-scatter-item:hover .colab-scatter-media img {
+  opacity: 1;
+  transform: scale(1.05);
+  filter: contrast(1.12) saturate(1.05);
+}
+
+.colab-scatter-item:hover .colab-scatter-tag {
+  opacity: 1;
+  color: #ffffff;
+  text-shadow:
+    -1px -1px 0 #000000,
+     1px -1px 0 #000000,
+    -1px  1px 0 #000000,
+     1px  1px 0 #000000,
+     0 0 8px #39ff48,
+     0 0 14px #39ff48,
+     0 0 24px #19f028,
+     0 0 34px #39ff48;
+}
+
+/* Posições espalhadas harmonicamente pela tela */
+.colab-pos-1  { top: 10%; left: 3%;  transform: rotate(-4deg); }
+.colab-pos-2  { top: 12%; left: 21%; transform: rotate(3deg); }
+.colab-pos-3  { top: 12%; right: 21%; transform: rotate(-3deg); }
+.colab-pos-4  { top: 10%; right: 3%; transform: rotate(4deg); }
+
+.colab-pos-5  { top: 38%; left: 2%;  transform: rotate(3deg); }
+.colab-pos-6  { top: 35%; left: 17%; transform: rotate(-2.5deg); }
+.colab-pos-7  { top: 35%; right: 17%; transform: rotate(2.5deg); }
+.colab-pos-8  { top: 38%; right: 2%; transform: rotate(-3.5deg); }
+
+.colab-pos-9  { bottom: 6%; left: 4%;  transform: rotate(-3deg); }
+.colab-pos-10 { bottom: 8%; left: 23%; transform: rotate(2.5deg); }
+.colab-pos-11 { bottom: 8%; right: 23%; transform: rotate(-2.5deg); }
+.colab-pos-12 { bottom: 6%; right: 4%; transform: rotate(3.5deg); }
+
+/* Centro da tela: COMING SOON com fonte bold estilizada tamanho 34px piscando em efeito de glitch */
+.colab-center-cta-wrap {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.colab-coming-soon {
+  position: relative;
+  display: inline-block;
+  padding: 10px 20px;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  font-family: "Scorched Earth", "Silkscreen", "Rubik Glitch", "Share Tech Mono", var(--font-cyber), monospace;
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #ffffff;
+  paint-order: stroke fill;
+  -webkit-text-stroke: 3.5px #000000;
+  text-shadow:
+    -1.6px -1.6px 0 #000000,
+     1.6px -1.6px 0 #000000,
+    -1.6px  1.6px 0 #000000,
+     1.6px  1.6px 0 #000000;
+  filter: none;
+  cursor: pointer;
+  user-select: none;
+  animation: colabOccasionalGlitchMain 4.8s infinite steps(1, end);
+}
+
+.colab-coming-soon::before,
+.colab-coming-soon::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 10px 20px;
+  pointer-events: none;
+  background: transparent !important;
+  font-family: inherit;
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #ffffff;
+  paint-order: stroke fill;
+  -webkit-text-stroke: 3.5px #000000;
+  opacity: 0;
+}
+
+.colab-coming-soon::before {
+  text-shadow:
+    -1.6px -1.6px 0 #000000,
+     1.6px -1.6px 0 #000000,
+    -1.6px  1.6px 0 #000000,
+     1.6px  1.6px 0 #000000;
+  animation: colabOccasionalGlitchTop 4.8s infinite steps(1, end);
+}
+
+.colab-coming-soon::after {
+  text-shadow:
+    -1.6px -1.6px 0 #000000,
+     1.6px -1.6px 0 #000000,
+    -1.6px  1.6px 0 #000000,
+     1.6px  1.6px 0 #000000;
+  animation: colabOccasionalGlitchBot 4.8s infinite steps(1, end);
+}
+
+.colab-coming-soon:hover {
+  color: #ffffff;
+  text-shadow:
+    -1.6px -1.6px 0 #000000,
+     1.6px -1.6px 0 #000000,
+    -1.6px  1.6px 0 #000000,
+     1.6px  1.6px 0 #000000;
+  filter: none;
+}
+
+@keyframes colabOccasionalGlitchMain {
+  0%, 86%, 97%, 100% {
+    opacity: 1;
+    transform: translate(0, 0) skewX(0deg);
+  }
+  87% {
+    opacity: 0.85;
+    transform: translate(-3px, 1px) skewX(-5deg);
+  }
+  89% {
+    opacity: 0.25;
+    transform: translate(4px, -1px) skewX(4deg);
+  }
+  91% {
+    opacity: 1;
+    transform: translate(-2px, 0) skewX(-2deg);
+  }
+  93% {
+    opacity: 0.35;
+    transform: translate(3px, 1px) skewX(5deg);
+  }
+  95% {
+    opacity: 1;
+    transform: translate(-2px, -1px) skewX(-3deg);
+  }
+}
+
+@keyframes colabOccasionalGlitchTop {
+  0%, 86%, 97%, 100% {
+    opacity: 0;
+    clip-path: inset(0 0 100% 0);
+    transform: translate(0, 0);
+  }
+  87% {
+    opacity: 1;
+    clip-path: inset(4% 0 58% 0);
+    transform: translate(-5px, -2px);
+  }
+  90% {
+    opacity: 1;
+    clip-path: inset(22% 0 38% 0);
+    transform: translate(5px, 1px);
+  }
+  93% {
+    opacity: 1;
+    clip-path: inset(45% 0 18% 0);
+    transform: translate(-4px, 1px);
+  }
+  95% {
+    opacity: 1;
+    clip-path: inset(10% 0 66% 0);
+    transform: translate(4px, -1px);
+  }
+}
+
+@keyframes colabOccasionalGlitchBot {
+  0%, 86%, 97%, 100% {
+    opacity: 0;
+    clip-path: inset(100% 0 0 0);
+    transform: translate(0, 0);
+  }
+  88% {
+    opacity: 1;
+    clip-path: inset(56% 0 4% 0);
+    transform: translate(5px, 2px);
+  }
+  91% {
+    opacity: 1;
+    clip-path: inset(34% 0 24% 0);
+    transform: translate(-5px, -1px);
+  }
+  94% {
+    opacity: 1;
+    clip-path: inset(68% 0 6% 0);
+    transform: translate(4px, -1px);
+  }
+  96% {
+    opacity: 1;
+    clip-path: inset(20% 0 50% 0);
+    transform: translate(-3px, 1px);
+  }
+}
+
+/* Responsividade Mobile para o botão da H0M3 e página da Colab */
+@media (max-width: 820px) {
+  .home-colab-corner-link {
+    position: relative;
+    top: auto;
+    left: auto;
+    margin-top: 10px;
+    padding: 4px 10px;
+    font-size: 11px;
+    max-width: 94vw;
+    align-self: center;
+    justify-content: center;
+    text-align: center;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 768px) {
+
+  .colab-header {
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 10px;
+  }
+
+  .colab-back-home {
+    position: static;
+    align-self: flex-start;
+    font-size: 10.5px;
+    padding: 4px 9px;
+  }
+
+  .colab-top-title {
+    font-size: 13.5px;
+    padding: 8px 14px;
+    letter-spacing: 0.08em;
+  }
+
+  .colab-scatter-stage {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    padding: 112px 14px 48px;
+    align-items: center;
+    justify-items: center;
+  }
+
+  .colab-scatter-item {
+    position: relative;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: 100%;
+    max-width: 165px;
+  }
+
+  .colab-coming-soon,
+  .colab-coming-soon::before,
+  .colab-coming-soon::after {
+    font-size: 24px;
+  }
+
+  .colab-coming-soon {
+    padding: 12px 20px;
+  }
+
+  .colab-coming-soon::before,
+  .colab-coming-soon::after {
+    inset: 12px 20px;
+  }
+}
+
+/* ==========================================================================
+   ABA C0MUN1DAD3 — GRADE DE MOLDURAS RETANGULARES (2560x1440) + PROMPT CMD
+   ========================================================================== */
+
+body.page-comunidade {
+  background: #000000;
+  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
+}
+
+body.page-comunidade .site-header {
+  position: relative;
+  z-index: 30;
+  padding: 4px 16px 0;
+  pointer-events: none;
+}
+
+body.page-comunidade .site-header .brand-wrap {
+  padding: 2px 18px 4px;
+  pointer-events: auto;
+}
+
+body.page-comunidade .site-header .brand-divider {
+  margin-top: 6px;
+}
+
+body.page-comunidade .site-header .lang-switch {
+  top: 8px;
+  right: 24px;
+  pointer-events: auto;
+}
+
+body.page-comunidade .site-header .site-nav {
+  position: fixed;
+  left: 50%;
+  bottom: 8px;
+  transform: translateX(-50%);
+  margin-top: 0;
+  z-index: 35;
+  width: max-content;
+  max-width: 96vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  pointer-events: auto;
+}
+
+.community-nav-min-btn {
+  display: none;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  font-family: "Share Tech Mono", var(--font-cyber);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #39ff48;
+  background: rgba(0, 5, 1, 0.9);
+  border: 1px solid #39ff48;
+  border-radius: 4px;
+  padding: 3px 11px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.9), 0 0 8px rgba(57, 255, 72, 0.35);
+  transition: background 0.16s ease, color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.community-nav-min-btn:hover,
+.community-nav-min-btn:active {
+  background: #39ff48;
+  color: #000000;
+}
+
+body.page-comunidade .site-header .site-nav.is-minimized .nav-list {
+  display: none !important;
+}
+
+.community-viewport-board {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 15;
+  overflow: hidden;
+  background: #000000;
+}
+
+.community-bg-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+}
+
+.community-grid-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Moldura #01 — Perímetro exato do 1º retângulo do fundo (X: 20..328 / 2560, Y: 85..297 / 1440) */
+.community-member-slot {
+  position: absolute;
+  box-sizing: border-box;
+  pointer-events: auto;
+  cursor: pointer;
+  outline: none;
+  z-index: 22;
+}
+
+.community-slot-1 {
+  left: 0.78125%;
+  top: 5.90278%;
+  width: 12.03125%;
+  height: 14.72222%;
+  /* Espaço visível entre a borda do perímetro do retângulo do fundo e a imagem do membro */
+  padding: clamp(7px, 0.65vw, 15px);
+}
+
+/* Moldura #02 — Perímetro exato do 2º retângulo do fundo (X: 328..645 / 2560, Y: 85..297 / 1440) */
+.community-slot-2 {
+  left: 12.8125%;
+  top: 5.90278%;
+  width: 12.3828125%;
+  height: 14.72222%;
+  padding: clamp(7px, 0.65vw, 15px);
+}
+
+/* Moldura #03 — Perímetro exato do 3º retângulo do fundo (X: 645..963 / 2560, Y: 85..297 / 1440) */
+.community-slot-3 {
+  left: 25.1953125%;
+  top: 5.90278%;
+  width: 12.421875%;
+  height: 14.72222%;
+  padding: clamp(7px, 0.65vw, 15px);
+}
+
+/* Moldura #04 — Perímetro exato do 4º retângulo do fundo (X: 963..1280 / 2560, Y: 85..297 / 1440) */
+.community-slot-4 {
+  left: 37.6171875%;
+  top: 5.90278%;
+  width: 12.3828125%;
+  height: 14.72222%;
+  padding: clamp(7px, 0.65vw, 15px);
+}
+
+/* Moldura #05 — Perímetro exato do 5º retângulo do fundo (X: 1280..1596 / 2560, Y: 85..297 / 1440) */
+.community-slot-5 {
+  left: 50%;
+  top: 5.90278%;
+  width: 12.34375%;
+  height: 14.72222%;
+  padding: clamp(7px, 0.65vw, 15px);
+}
+
+.community-member-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(57, 255, 72, 0.42);
+  background: #010902;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.9);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.community-member-slot:hover .community-member-frame,
+.community-member-slot:focus-visible .community-member-frame,
+.community-member-slot.is-active .community-member-frame {
+  border-color: #39ff48;
+  box-shadow: 0 0 18px rgba(57, 255, 72, 0.55), inset 0 0 12px rgba(57, 255, 72, 0.22);
+  transform: scale(1.012);
+}
+
+.community-member-img {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  object-position: center;
+  display: block;
+  user-select: none;
+  transition: transform 0.32s ease, filter 0.25s ease;
+}
+
+.community-member-slot:hover .community-member-img,
+.community-member-slot.is-active .community-member-img {
+  transform: scale(1.035);
+  filter: contrast(1.06) brightness(1.05);
+}
+
+.community-member-tag {
+  position: absolute;
+  left: 6px;
+  bottom: 6px;
+  padding: 2px 7px;
+  font-family: "Share Tech Mono", var(--font-cyber);
+  font-size: clamp(8.5px, 0.58vw, 11px);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #39ff48;
+  background: rgba(0, 5, 1, 0.88);
+  border: 1px solid rgba(57, 255, 72, 0.6);
+  text-shadow: 0 0 6px rgba(57, 255, 72, 0.45);
+  pointer-events: none;
+}
+
+/* Janela de Prompt de Comando (CMD) da Comunidade — Mesmo aspecto do prompt das marcas na H0M3 */
+.community-cmd-window {
+  position: absolute;
+  left: 50%;
+  top: calc(20.625% + 10px);
+  width: min(840px, 94vw);
+  max-height: calc(100vh - 21.5vh - 54px);
+  display: flex;
+  flex-direction: column;
+  z-index: 45;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, 6px) scale(0.985);
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
+}
+
+.community-cmd-window.is-open {
+  pointer-events: auto;
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0) scale(1);
+}
+
+.community-cmd-body {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  padding: 12px 14px 14px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  max-height: calc(100vh - 21.5vh - 96px);
+}
+
+.community-cmd-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.community-cmd-avatar {
+  width: 68px;
+  height: 48px;
+  object-fit: cover;
+  border: 1px solid #39ff48;
+  border-radius: 3px;
+  background: #000000;
+  flex-shrink: 0;
+  box-shadow: 0 0 10px rgba(57, 255, 72, 0.3);
+}
+
+.community-cmd-handle {
+  font-family: "Share Tech Mono", monospace;
+  font-size: 11.5px;
+  font-weight: 400;
+  color: #88ff91;
+  margin-left: 6px;
+}
+
+.community-cmd-author {
+  font-family: "Share Tech Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  color: #b4ffba;
+  background: rgba(25, 240, 40, 0.11);
+  border: 1px solid rgba(57, 255, 72, 0.4);
+  padding: 2px 8px;
+  border-radius: 3px;
+}
+
+.community-cmd-terminal {
+  min-height: 112px;
+  font-size: 11.8px;
+  line-height: 1.52;
+}
+
+/* Galeria de Trabalhos dentro do Prompt CMD */
+.community-works-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(1, 10, 2, 0.92);
+  border: 1px solid rgba(57, 255, 72, 0.35);
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.community-works-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-bottom: 1px dashed rgba(57, 255, 72, 0.32);
+  padding-bottom: 6px;
+}
+
+.community-works-title {
+  font-family: "Share Tech Mono", var(--font-cyber);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #39ff48;
+}
+
+.community-works-count {
+  font-family: "Share Tech Mono", monospace;
+  font-size: 10px;
+  color: #000000;
+  background: #39ff48;
+  padding: 1px 7px;
+  border-radius: 2px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.community-works-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.community-work-card {
+  display: flex;
+  flex-direction: column;
+  background: #000401;
+  border: 1px solid rgba(57, 255, 72, 0.38);
+  border-radius: 3px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+  outline: none;
+}
+
+.community-work-card:hover,
+.community-work-card:focus-visible {
+  border-color: #39ff48;
+  box-shadow: 0 0 14px rgba(57, 255, 72, 0.42);
+  transform: translateY(-2px);
+}
+
+.community-work-thumb-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: #000000;
+  overflow: hidden;
+}
+
+.community-work-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.28s ease;
+}
+
+.community-work-card:hover .community-work-img {
+  transform: scale(1.06);
+}
+
+.community-work-res {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  padding: 1px 5px;
+  font-family: "Share Tech Mono", monospace;
+  font-size: 9px;
+  color: #39ff48;
+  background: rgba(0, 5, 1, 0.88);
+  border: 1px solid rgba(57, 255, 72, 0.55);
+  letter-spacing: 0.04em;
+}
+
+.community-work-caption {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 7px;
+  border-top: 1px solid rgba(57, 255, 72, 0.22);
+}
+
+.community-work-name {
+  font-family: "Share Tech Mono", var(--font-cyber);
+  font-size: 10px;
+  font-weight: 700;
+  color: #e6ffe8;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.community-work-tech {
+  font-family: "Share Tech Mono", monospace;
+  font-size: 9px;
+  color: #79e883;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Botões de Link para Instagram e Portfólio */
+.community-cmd-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 2px;
+}
+
+.community-link-btn {
+  flex: 1 1 220px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  text-decoration: none;
+  font-family: "Share Tech Mono", var(--font-cyber);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #000000;
+  background: #39ff48;
+  border: 1px solid #39ff48;
+  border-radius: 3px;
+  padding: 9px 14px;
+  box-shadow: 0 0 14px rgba(57, 255, 72, 0.45);
+  transition: background 0.16s ease, color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+}
+
+.community-link-btn:hover {
+  background: #000000;
+  color: #39ff48;
+  box-shadow: 0 0 20px rgba(57, 255, 72, 0.75);
+  transform: translateY(-1px);
+}
+
+.community-link-portfolio {
+  background: rgba(25, 240, 40, 0.16);
+  color: #39ff48;
+}
+
+.community-link-portfolio:hover {
+  background: #39ff48;
+  color: #000000;
+}
+
+/* Lightbox de Alta Resolução dos Trabalhos */
+.community-work-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  background: rgba(0, 4, 1, 0.88);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.18s ease, visibility 0.18s ease;
+}
+
+.community-work-lightbox.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.community-lightbox-window {
+  width: min(980px, 94vw);
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.community-lightbox-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  background: #000501;
+  overflow-y: auto;
+}
+
+.community-lightbox-img {
+  max-width: 100%;
+  max-height: calc(92vh - 140px);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border: 1px solid rgba(57, 255, 72, 0.55);
+  box-shadow: 0 0 28px rgba(0, 0, 0, 0.95);
+}
+
+.community-lightbox-footer {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.community-lightbox-meta {
+  font-family: "Share Tech Mono", var(--font-cyber);
+  font-size: 12px;
+  color: #b7ffbc;
+  letter-spacing: 0.06em;
+}
+
+.community-cmd-min-bottom-btn {
+  display: none;
+  cursor: pointer;
+  background: rgba(0, 5, 1, 0.95);
+  color: #39ff48;
+  border: 1px solid #39ff48;
+}
+
+@media (max-width: 960px) {
+  .community-cmd-window {
+    left: 3vw;
+    right: 3vw;
+    top: 22vh;
+    width: 94vw;
+    max-height: 74vh;
+  }
+
+  .community-works-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  /* Logo central mais acima também no telefone */
+  body.page-comunidade .site-header {
+    padding: 2px 10px 0;
+  }
+
+  body.page-comunidade .site-header .brand-wrap {
+    padding: 2px 12px 3px;
+  }
+
+  body.page-comunidade .site-header .brand-logo {
+    width: min(155px, 46vw);
+  }
+
+  body.page-comunidade .site-header .brand-divider {
+    width: min(155px, 46vw);
+    margin-top: 4px;
+  }
+
+  body.page-comunidade .site-header .lang-switch {
+    top: 5px;
+    right: 8px;
+    padding: 3px 7px;
+    font-size: 10.5px;
+  }
+
+  /* Menu no extremo inferior com botão de minimizar no telefone */
+  body.page-comunidade .site-header .site-nav {
+    bottom: 6px;
+    max-width: 98vw;
+    gap: 5px;
+  }
+
+  .community-nav-min-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  body.page-comunidade .site-header .nav-list {
+    gap: 6px;
+    justify-content: center;
+  }
+
+  body.page-comunidade .site-header .nav-link {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+
+  /* No telefone, a imagem de cada membro ocupa 2 quadrados para aparecer por inteiro */
+  .community-slot-1 {
+    left: 0.78125%;
+    top: 5.90278%;
+    width: 24.4140625%;
+    height: 14.72222%;
+    padding: 5px;
+  }
+
+  .community-slot-2 {
+    left: 25.1953125%;
+    top: 5.90278%;
+    width: 24.8046875%;
+    height: 14.72222%;
+    padding: 5px;
+  }
+
+  .community-slot-3 {
+    left: 50%;
+    top: 5.90278%;
+    width: 24.765625%;
+    height: 14.72222%;
+    padding: 5px;
+  }
+
+  .community-slot-4 {
+    left: 74.765625%;
+    top: 5.90278%;
+    width: 24.4140625%;
+    height: 14.72222%;
+    padding: 5px;
+  }
+
+  .community-slot-5 {
+    left: 0.78125%;
+    top: 20.625%;
+    width: 24.4140625%;
+    height: 14.72222%;
+    padding: 5px;
+  }
+
+  .community-member-img {
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+  }
+
+  .community-cmd-window {
+    left: 3vw;
+    right: 3vw;
+    top: 36vh;
+    width: 94vw;
+    max-height: 56vh;
+    transform: translateY(6px) scale(0.985);
+  }
+
+  .community-cmd-window.is-open {
+    transform: translateY(0) scale(1);
+  }
+
+  .community-cmd-body {
+    max-height: calc(56vh - 42px);
+  }
+
+  .community-cmd-min-bottom-btn {
+    display: inline-flex;
+    flex: 1 1 100%;
+  }
+}
+
+/* ==========================================================================
+   PLAYER DE ÁUDIO MIKKERJ (@MIKKERJ.MUSIC) NA ABA C0MUN1DAD3
+   ========================================================================== */
+
+.community-audio-hud {
+  position: fixed;
+  top: 8px;
+  left: 16px;
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 5, 1, 0.92);
+  border: 1px solid rgba(57, 255, 72, 0.72);
+  border-radius: 4px;
+  padding: 5px 10px;
+  box-shadow: 0 0 14px rgba(0, 0, 0, 0.95), 0 0 10px rgba(57, 255, 72, 0.3);
+  pointer-events: auto;
+}
+
+.community-audio-hud-led {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #39ff48;
+  box-shadow: 0 0 8px #39ff48;
+  flex-shrink: 0;
+}
+
+.community-audio-hud.is-paused .community-audio-hud-led {
+  background: #4e6b51;
+  box-shadow: none;
+}
+
+.community-audio-eq {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 11px;
+}
+
+.community-audio-eq span {
+  width: 2px;
+  background: #39ff48;
+  display: block;
+  animation: mikkerjEqBounce 0.65s infinite ease-in-out alternate;
+}
+
+.community-audio-eq span:nth-child(1) { height: 4px; animation-delay: 0s; }
+.community-audio-eq span:nth-child(2) { height: 10px; animation-delay: 0.16s; }
+.community-audio-eq span:nth-child(3) { height: 6px; animation-delay: 0.32s; }
+.community-audio-eq span:nth-child(4) { height: 11px; animation-delay: 0.12s; }
+
+.community-audio-hud.is-paused .community-audio-eq span,
+.community-cmd-audio.is-paused .community-audio-eq span {
+  animation-play-state: paused;
+  height: 3px;
+  opacity: 0.5;
+}
+
+@keyframes mikkerjEqBounce {
+  0% { height: 3px; }
+  100% { height: 11px; }
+}
+
+.community-audio-hud-label {
+  font-family: "Share Tech Mono", var(--font-cyber);
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #d6ffda;
+  letter-spacing: 0.06em;
+  max-width: 240px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.community-audio-hud-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  font-family: "Share Tech Mono", var(--font-cyber);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #000000;
+  background: #39ff48;
+  border: 1px solid #39ff48;
+  border-radius: 3px;
+  padding: 2px 7px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.community-audio-hud-btn:hover {
+  background: #000000;
+  color: #39ff48;
+}
+
+/* Player completo dentro do Prompt CMD do Mikkerj */
+.community-cmd-audio {
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(2, 16, 4, 0.94);
+  border: 1px solid #39ff48;
+  border-radius: 4px;
+  padding: 9px 11px;
+  box-shadow: inset 0 0 14px rgba(57, 255, 72, 0.14);
+}
+
+.community-cmd-audio.is-visible {
+  display: flex;
+}
+
+.community-cmd-audio-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.community-cmd-audio-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: "Share Tech Mono", var(--font-cyber);
+  font-size: 11px;
+  font-weight: 700;
+  color: #39ff48;
+  letter-spacing: 0.06em;
+}
+
+.community-cmd-audio-tracks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.community-track-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  flex: 1 1 170px;
+  font-family: "Share Tech Mono", monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #b7ffbc;
+  background: #000601;
+  border: 1px solid rgba(57, 255, 72, 0.45);
+  border-radius: 3px;
+  padding: 5px 8px;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+
+.community-track-btn:hover,
+.community-track-btn.is-active {
+  color: #000000;
+  background: #39ff48;
+  border-color: #39ff48;
+  box-shadow: 0 0 10px rgba(57, 255, 72, 0.45);
+}
+
+@media (max-width: 768px) {
+  .community-audio-hud {
+    top: 4px;
+    left: 6px;
+    padding: 3px 7px;
+    gap: 5px;
+  }
+
+  .community-audio-hud-label {
+    font-size: 9px;
+    max-width: 112px;
+  }
+
+  .community-audio-hud-btn {
+    font-size: 9px;
+    padding: 1px 5px;
+  }
+}
+
